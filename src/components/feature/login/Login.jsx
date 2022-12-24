@@ -1,76 +1,29 @@
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import Banner from "../../../assets/img/line_banner.png";
 
 function Login() {
-  //   const [loginId, setLoginId] = useState("");
-  //   const [password, setPassword] = useState("");
-
-  // 오류 메세지 출력
-
-  //   const navigation = useNavigate();
-
-  //   const onLogin = () => {
-  //     postLogin({
-  //       loginId,
-  //       password,
-  //     })
-  //       .then((res) => {
-  //         // 백으로 받은 리스폰스 (토큰 값))
-  //         // 로컬스토리지에 저장했다 id라는 키값에
-  //         // 이 코드를 거치면 로컬스토리지에 토큰값이 저장되어있다,.
-  //         //localStorage.setItem, getItem 이미 있는 내장함수 (검색해보기)
-  //         localStorage.setItem("id", res.headers.authorization); // 헤더에 id 토큰값을 실어왔다
-  //         navigation("/");
-  //       })
-  //       .catch((error) => {
-  //         console.log("error 들어옴:", error);
-  //       });
-  //   };
-
   return (
     <StTopContainer>
-      <h1>감자마켓</h1>
-      <h3>감사히 자-알 쓰겠습니다!</h3>
+      <div>
+        <img alt="banner" src={Banner} height="150px" />
+      </div>
       <StInputGroup>
         <div>
-          <input
-            // value={loginId}
-            // onChange={(event) => {
-            //   setLoginId(event.target.value);
-            // }}
-            type="text"
-            name="id"
-            label="ID를 입력하세요."
-            width={"250px"}
-          ></input>
+          <input placeholder="이메일"></input>
         </div>
         <div>
-          <input
-            // onChange={(event) => {
-            //   setPassword(event.target.value);
-            // }}
-            type="password"
-            name="password"
-            label="비밀번호를 입력하세요."
-            width={"250px"}
-          ></input>
+          <input placeholder="비밀번호"></input>
         </div>
       </StInputGroup>
       <StButtonGroup>
         <div>
-          <button>login</button>
-          {/* <Button width={"250px"} onClick={onLogin}>
-            Login
-          </Button> */}
+          <button>로그인</button>
         </div>
-        <StLink>
-          <div>
-            Don't have an account? Please{" "}
-            <span style={{ fontWeight: "bold" }}>Sign Up.</span>
-          </div>
-          {/* <Link to="/signup"> */}
-          {/* </Link> */}
-        </StLink>
+        <Link to="/signup">
+          <button>신규 가입</button>
+        </Link>
       </StButtonGroup>
     </StTopContainer>
   );
@@ -92,8 +45,6 @@ const StInputGroup = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
-
-  gap: 30px;
 `;
 
 const StButtonGroup = styled.div`
@@ -104,12 +55,4 @@ const StButtonGroup = styled.div`
 
   margin: auto;
   gap: 20px;
-`;
-
-const StLink = styled.div`
-  a {
-    font-weight: 400;
-    text-decoration: none;
-    color: #4d4f50;
-  }
 `;
