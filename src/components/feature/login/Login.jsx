@@ -1,17 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Banner from "../../../assets/img/line_banner.png";
 import { useForm } from "react-hook-form";
+import { authInstance } from "../../../core/api/axios";
+import { postLogin } from "../../../redux/modules/authSlice";
 
 function Login() {
-  const { register, handleSubmit, getValues } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const onValid = (data) => {
-    console.log(data);
+  const navigation = useNavigate();
+
+  const onValid = async (data) => {
+    console.log("login data:", data);
+    await postLogin(data).then(
+      (response) => localStorage.setItem("id", response.headers.authorization),
+      navigation("/")
+    );
   };
-
-  const { email, password } = getValues();
 
   return (
     <form onSubmit={handleSubmit(onValid)}>
@@ -22,23 +32,33 @@ function Login() {
         <StInputGroup>
           <div>
             <input
-              {...register("email", { required: "이메일은 필수 입력입니다." })}
-              id="email"
+              {...register("username", {
+                required: "이메일은 필수 입력입니다.",
+              })}
               type="email"
-              name="email"
+              name="username"
               placeholder="이메일"
             ></input>
+            {errors.email && (
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div>
             <input
               {...register("password", {
                 required: "비밀번호는 필수 입력입니다.",
               })}
-              id="password"
               type="password"
               name="password"
               placeholder="비밀번호"
             ></input>
+            {errors.password && ( //div로 감싸서 100% 주면 부모 디브 밖으로 안 넘어간다
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.password.message}
+              </p>
+            )}
           </div>
         </StInputGroup>
         <StButtonGroup>

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Banner from "../../../assets/img/line_banner.png";
 import { useForm } from "react-hook-form";
+import { postSignup } from "../../../redux/modules/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const {
@@ -9,7 +11,17 @@ function Signup() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+  const navigation = useNavigate();
+
+  const onSubmit = async (data) => {
+    console.log("data:", data);
+    await postSignup(data).then(
+      (response) => localStorage.setItem("id", response.headers.authorization),
+      alert("회원가입이 완료되었습니다. 다시 로그인 해 주세요"),
+      navigation("/login")
+    );
+  };
 
   return (
     <StTopContainer>
@@ -20,10 +32,10 @@ function Signup() {
         <StInputGroup>
           <div>
             <input
-              name="email"
+              name="username"
               placeholder="이메일"
-              {...register("email", {
-                required: "이메일을 입력해주세요",
+              {...register("username", {
+                required: "이메일을 입력해주세요.",
                 pattern: {
                   value: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
                   message: "올바른 이메일 형식이 아닙니다.",
@@ -31,14 +43,29 @@ function Signup() {
               })}
             ></input>
             {errors.email && (
-              <p style={{ color: "red" }}>{errors.email.message}</p>
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.email.message}
+              </p>
             )}
           </div>
           <div>
-            <input placeholder="닉네임"></input>
+            <input
+              name="nickname"
+              placeholder="닉네임"
+              {...register("nickname", {
+                required: "닉네임을 입력해주세요.",
+              })}
+            ></input>
+            {errors.nickname && (
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.nickname.message}
+              </p>
+            )}
           </div>
           <div>
-            <input
+            {" "}
+            <input // 얘 100%
+              name="password"
               type="password"
               placeholder="비밀번호"
               {...register("password", {
@@ -50,8 +77,10 @@ function Signup() {
                 },
               })}
             />
-            {errors.password && (
-              <p style={{ color: "red" }}>{errors.password.message}</p>
+            {errors.password && ( //div로 감싸서 100% 주면 부모 디브 밖으로 안 넘어간다
+              <p style={{ color: "red", fontSize: "12px" }}>
+                {errors.password.message}
+              </p>
             )}
           </div>
         </StInputGroup>

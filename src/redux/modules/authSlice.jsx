@@ -1,34 +1,31 @@
-import { authInstance } from "../../core/axios";
+import { authInstance } from "../../core/api/axios";
 
-export const postSignup = async ({ loginId, nickname, password }) => {
+export const postSignup = async (data) => {
+  console.log("slice data:", data);
   try {
-    const data = await authInstance.post("/api/user/signup", {
-      loginId,
-      nickname,
-      password,
-    });
-    return data;
+    const response = await authInstance.post("/api/user/signup", data);
+    console.log("slice response:", response);
+    return response;
     // 리턴된 값을 로그인 컴포넌트에서 받도록 한다 (생각보다 간단함)
     // 캐치문에서 받게되는 에러도 이렇게 핸들하면 될거같음
     // 참고로 if은 모든 케이스가 "정상"일 때 사용하고, 진짜 "에러"가 동작하는 경우를 리턴하려면 try catch를 사용한다.
     // setState로 텍스트 관리하지말고 custom훅을 사용하자 (사용하는 비슷한 훅이 많을 경우: 예시로 useForm 검색)
   } catch (error) {
-    return console.log(error);
+    return console.log("slice error:", error);
   }
 };
 
-export const postLogin = async ({ loginId, password }) => {
+export const postLogin = async (data) => {
   try {
     const data = await authInstance.post("/api//login", {
-      loginId,
-      password,
+      data,
     });
-    console.log(data);
+    console.log("login slice:", data);
     return data;
   } catch (error) {
     console.log(error);
     if (error.response.data.status === 400) {
-      alert("옳바른 아이디나 비밀번호를 찾을 수 없습니다.");
+      alert("올바른 아이디나 비밀번호를 찾을 수 없습니다.");
     }
   }
 };
