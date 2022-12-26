@@ -17,9 +17,7 @@ export const postSignup = async (data) => {
 
 export const postLogin = async (data) => {
   try {
-    const response = await authInstance.post("/api/user/login", {
-      data,
-    });
+    const response = await authInstance.post("/api/user/login", data);
     console.log("login slice:", response);
     return response;
   } catch (error) {
