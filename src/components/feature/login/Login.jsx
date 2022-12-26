@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import Banner from "../../../assets/img/line_banner.png";
 import { useForm } from "react-hook-form";
-import { authInstance } from "../../../core/api/axios";
 import { postLogin } from "../../../redux/modules/authSlice";
 
 function Login() {

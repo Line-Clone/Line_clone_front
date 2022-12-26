@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Banner from "../../../assets/img/line_banner.png";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,6 @@ function Signup() {
   const onSubmit = async (data) => {
     console.log("data:", data);
     await postSignup(data).then(
-      (response) => localStorage.setItem("id", response.headers.authorization),
       alert("회원가입이 완료되었습니다. 다시 로그인 해 주세요"),
       navigation("/login")
     );
@@ -37,7 +36,8 @@ function Signup() {
               {...register("username", {
                 required: "이메일을 입력해주세요.",
                 pattern: {
-                  value: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+                  value:
+                    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
                   message: "올바른 이메일 형식이 아닙니다.",
                 },
               })}
@@ -71,7 +71,8 @@ function Signup() {
               {...register("password", {
                 required: "비밀번호를 입력해주세요.",
                 pattern: {
-                  value: /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,16}$/,
+                  value:
+                    /(?=.*\d{1,50})(?=.*[~`!@#$%&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,16}$/,
                   message:
                     "비밀번호는 8~16자로 영문 소문자, 숫자, 특수기호를 조합해서 사용하세요.",
                 },

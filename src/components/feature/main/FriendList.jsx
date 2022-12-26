@@ -7,8 +7,18 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonIcon from "@mui/icons-material/Person";
 import SmsIcon from "@mui/icons-material/Sms";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import TextButton from "../../common/TextButton";
+import { useNavigate } from "react-router-dom";
 
 function FriendList() {
+  const navigate = useNavigate();
+
+  const onLogout = () => {
+    alert("로그아웃 되었습니다.");
+    navigate("/login");
+    localStorage.clear();
+  };
+
   return (
     <div style={OuterStyle}>
       <div style={firstLine}>
@@ -20,6 +30,9 @@ function FriendList() {
         </div>
         <div>
           <PersonAddAlt1Icon fontSize="large" />
+        </div>
+        <div>
+          <TextButton onClick={onLogout}>로그아웃</TextButton>
         </div>
       </div>
       <div style={secondtLine}>
