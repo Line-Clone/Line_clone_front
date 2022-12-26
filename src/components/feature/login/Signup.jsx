@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Banner from "../../../assets/img/line_banner.png";
 import { useForm } from "react-hook-form";

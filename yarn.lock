@@ -1271,7 +1271,11 @@
 
 "@emotion/styled@^11.10.5":
   version "11.10.5"
+<<<<<<< HEAD
   resolved "https://registry.npmjs.org/@emotion/styled/-/styled-11.10.5.tgz"
+=======
+  resolved "https://registry.yarnpkg.com/@emotion/styled/-/styled-11.10.5.tgz#1fe7bf941b0909802cb826457e362444e7e96a79"
+>>>>>>> d8bb5b10ef15640fa49e8e7c421b14de9e1b5a73
   integrity sha512-8EP6dD7dMkdku2foLoruPCNkRevzdcBaY6q0l0OsbyJK+x8D9HWjX27ARiSIKNF634hY9Zdoedh8bJCiva8yZw==
   dependencies:
     "@babel/runtime" "^7.18.3"
@@ -8091,7 +8095,7 @@ react-router@6.6.0:
   resolved "https://registry.npmjs.org/react-router/-/react-router-6.6.0.tgz"
   integrity sha512-+VPfCIaFbkW7BAiB/2oeprxKAt1KLbl+zXZ10CXOYezKWgBmTKyh8XjI53eLqY5kd7uY+V4rh3UW44FclwUU+Q==
   dependencies:
-    "@remix-run/router" "1.2.0"
+    "@remix-run/router" "1.2.1"
 
 react-scripts@5.0.1:
   version "5.0.1"
