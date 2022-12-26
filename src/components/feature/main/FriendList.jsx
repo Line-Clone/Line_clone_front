@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -6,9 +6,21 @@ import CloseIcon from "@mui/icons-material/Close";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonIcon from "@mui/icons-material/Person";
 import SmsIcon from "@mui/icons-material/Sms";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+
+import { useDispatch, useSelector } from "react-redux";
+import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
 
 function FriendList() {
+  const chatrooms = useSelector((state) => state.rooms.rooms);
+  console.log(chatrooms);
+  const dispatch = useDispatch();
+
+  function enterRoom(roomId) {}
+
+  useEffect(() => {
+    dispatch(readAllRooms());
+  }, []);
+
   return (
     <div style={OuterStyle}>
       <div style={firstLine}>
@@ -18,9 +30,7 @@ function FriendList() {
         <div>
           <SmsIcon fontSize="large" />
         </div>
-        <div>
-          <PersonAddAlt1Icon fontSize="large" />
-        </div>
+        <div></div>
       </div>
       <div style={secondtLine}>
         <div>
@@ -32,25 +42,25 @@ function FriendList() {
         <hr></hr>
         <div style={firstRowLine}>나의 닉네임</div>
         <hr />
-        친구
+        채팅방목록
         <hr />
-        <div>
-          <div style={rowLine}>
-            <AccountCircleIcon /> 친구 닉네임
-          </div>
-          <div style={rowLine}>
-            <AccountCircleIcon /> 친구 닉네임
-          </div>
-          <div style={rowLine}>
-            <AccountCircleIcon /> 친구 닉네임
-          </div>
-          <div style={rowLine}>
-            <AccountCircleIcon /> 친구 닉네임
-          </div>
-          <div style={rowLine}>
-            <AccountCircleIcon /> 친구 닉네임
-          </div>
-        </div>
+        {chatrooms?.map((room) => {
+          return (
+            <div style={rowLine}>
+              {" "}
+              <AccountCircleIcon />
+              {room.roomName}
+              <button
+                type="button"
+                onClick={() => {
+                  enterRoom(room.roomId);
+                }}
+              >
+                입장하기
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
