@@ -12,7 +12,7 @@ function Router() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
-        <Route path="/chat" element={<ChatPage />}></Route>
+        <Route path="/chat/room/:id" element={<ChatPage />}></Route>
       </Routes>
     </BrowserRouter>
   );

@@ -1,44 +1,43 @@
 import React, { useState, useEffect } from "react";
 import Stomp from "stompjs";
 import SockJS from "sockjs-client";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { readOneRoom } from "../../../redux/modules/chatRoomSlice";
 
 function Chat() {
   let sockJS = new SockJS("/ws/chat");
-  let stompClient = Stomp.over(sockJS);
-
-  const initialState = {
-    roomId: "",
-    room: {},
-    sender: "",
-    message: "",
-    messages: [],
-  };
+  let stomp = Stomp.over(sockJS);
+  let reconnect = 0;
 
   const [username, setUsername] = useState();
   const [content, setContent] = useState();
   const [nickname, setNickname] = useState();
   const [message, setMessage] = useState();
 
+  const { id } = useParams();
+  console.log("param:", id);
+
+  const oneroom = useSelector((state) => state.rooms.room);
+  console.log("1 room:", oneroom);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    stompClient.connect({}, () => {
-      stompClient.subscribe("/topic/roomId", (data) => {
-        const newMessage = JSON.parse(data.body);
-        addMessage(newMessage);
-      });
-    });
-  }, [content]);
+    dispatch(readOneRoom(id));
+  });
 
-  const handleEnter = (nickname, content) => {
-    const newMessage = { nickname, content };
-    stompClient.send("/hello", {}, JSON.stringify(newMessage));
-    setMessage("");
-  };
-
-  const addMessage = (message) => {
-    setContent((prev) => [...prev, message]);
-  };
-
-  return <div>엉엉엉</div>;
+  return (
+    <div>
+      <div>
+        <ul>
+          {oneroom.map((item) => {
+            <li key={item.id}>{item.id}</li>;
+          })}
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 export default Chat;

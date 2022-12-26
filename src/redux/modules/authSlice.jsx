@@ -7,7 +7,7 @@ export const postSignup = async (data) => {
     console.log("slice response:", response);
     return response;
     // 리턴된 값을 로그인 컴포넌트에서 받도록 한다 (생각보다 간단함)
-    // 캐치문에서 받게되는 에러도 이렇게 핸들하면 될거같음
+    // 캐치문에서 받게되는 에러도 이렇게 핸들하면 될거같음ㄷㅌ
     // 참고로 if은 모든 케이스가 "정상"일 때 사용하고, 진짜 "에러"가 동작하는 경우를 리턴하려면 try catch를 사용한다.
     // setState로 텍스트 관리하지말고 custom훅을 사용하자 (사용하는 비슷한 훅이 많을 경우: 예시로 useForm 검색)
   } catch (error) {

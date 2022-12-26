@@ -16,6 +16,20 @@ export const readAllRooms = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await authInstance.get("/chat/rooms");
+      console.log("rooms:", response);
+      return thunkAPI.fulfillWithValue(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const readOneRoom = createAsyncThunk(
+  "room/readOneRoom",
+  async (roomId, thunkAPI) => {
+    try {
+      const response = await authInstance.get(`/api/chat/room/${roomId}`);
+      console.log("readOne:", response);
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -51,6 +65,10 @@ const chatRoomsSlice = createSlice({
     [readAllRooms.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
+    },
+    [readOneRoom.fulfilled]: (state, action) => {
+      console.log("oneroom payload:", action.payload);
+      state.rooms.room = action.payload;
     },
   },
 });

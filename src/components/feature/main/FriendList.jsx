@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -9,9 +9,14 @@ import SmsIcon from "@mui/icons-material/Sms";
 import { useDispatch, useSelector } from "react-redux";
 import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
 import { useNavigate } from "react-router";
+
 function FriendList() {
+  const state = useSelector((state) => state);
+  console.log("전체 state:", state);
+
   const chatrooms = useSelector((state) => state.rooms.rooms);
-  console.log(chatrooms);
+  console.log("chatrooms:", chatrooms);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -21,7 +26,15 @@ function FriendList() {
     localStorage.clear();
   }
 
-  function enterRoom(roomId) {}
+  function enterRoom(roomId) {
+    console.log("id:", roomId);
+    const nick = prompt("닉네임을 적어주세요.");
+    if (nick !== "") {
+      localStorage.setItem("wschat.nick", nick);
+      localStorage.setItem("wschat.roomId", roomId);
+      navigate(`/chat/room/${roomId}`);
+    }
+  }
 
   useEffect(() => {
     dispatch(readAllRooms());
