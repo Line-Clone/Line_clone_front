@@ -17,7 +17,9 @@ function Login() {
 
   const onValid = async (data) => {
     console.log("login data:", data);
-    await postLogin(data).then(
+    const jsonData = JSON.stringify({ data });
+    console.log("json:", data);
+    await postLogin(jsonData).then(
       (response) => localStorage.setItem("id", response.headers.authorization),
       navigation("/")
     );
