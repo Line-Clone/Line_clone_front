@@ -6,14 +6,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonIcon from "@mui/icons-material/Person";
 import SmsIcon from "@mui/icons-material/Sms";
-
 import { useDispatch, useSelector } from "react-redux";
 import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
-
+import { useNavigate } from "react-router";
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
   console.log(chatrooms);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  function onLogout() {
+    alert("로그아웃 되었습니다.");
+    navigate("/login");
+    localStorage.clear();
+  }
 
   function enterRoom(roomId) {}
 
@@ -38,6 +44,7 @@ function FriendList() {
           <MinimizeIcon />
           <CheckBoxOutlineBlankIcon />
           <CloseIcon />
+          <button onClick={onLogout}>로그아웃</button>
         </div>
         <hr></hr>
         <div style={firstRowLine}>나의 닉네임</div>
