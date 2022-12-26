@@ -5,10 +5,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { readOneRoom } from "../../../redux/modules/chatRoomSlice";
 
+export const message = {
+  username: "",
+  content: "",
+};
+
 function Chat() {
   let sockJS = new SockJS("/ws/chat");
   let stomp = Stomp.over(sockJS);
   let reconnect = 0;
+
+  const addMessage = (message) => {
+    setContent((prev) => [...prev, message]);
+  };
+
+  useEffect(() => {
+    stomp.connect({}, () => {
+      stomp.subscribe("/topic/roomId", (data) => {
+        console.log("sock data:", data);
+        const newMessage = JSON.parse(data);
+        addMessage(newMessage);
+      });
+    });
+  });
 
   const [username, setUsername] = useState();
   const [content, setContent] = useState();
@@ -16,10 +35,6 @@ function Chat() {
   const [message, setMessage] = useState();
 
   const { id } = useParams();
-  console.log("param:", id);
-
-  const oneroom = useSelector((state) => state.rooms.room);
-  console.log("1 room:", oneroom);
 
   const dispatch = useDispatch();
 
@@ -27,17 +42,7 @@ function Chat() {
     dispatch(readOneRoom(id));
   });
 
-  return (
-    <div>
-      <div>
-        <ul>
-          {oneroom.map((item) => {
-            <li key={item.id}>{item.id}</li>;
-          })}
-        </ul>
-      </div>
-    </div>
-  );
+  return <div>ahhhhhhh</div>;
 }
 
 export default Chat;
