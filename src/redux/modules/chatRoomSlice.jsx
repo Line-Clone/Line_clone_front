@@ -11,6 +11,18 @@ const initialState = {
   error: null,
 };
 
+export const createRoom = createAsyncThunk(
+  "room/CREATE_ROOM",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await authInstance.post(`/chat/room?name=${payload}`);
+      return thunkAPI.fulfillWithValue(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 export const readAllRooms = createAsyncThunk(
   "rooms/READ_ROOMS",
   async (payload, thunkAPI) => {
@@ -49,6 +61,16 @@ const chatRoomsSlice = createSlice({
       state.rooms = action.payload;
     },
     [readAllRooms.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    [createRoom.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [createRoom.fulfilled]: (state, action) => {
+      state.isLoading = false;
+    },
+    [createRoom.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },

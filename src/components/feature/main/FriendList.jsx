@@ -9,16 +9,30 @@ import SmsIcon from "@mui/icons-material/Sms";
 import { useDispatch, useSelector } from "react-redux";
 import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
 import { useNavigate } from "react-router";
+import { createRoom } from "../../../redux/modules/chatRoomSlice";
+
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
   console.log(chatrooms);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [roomTitle, setRoomTitle] = useState("");
 
   function onLogout() {
     alert("로그아웃 되었습니다.");
     navigate("/login");
     localStorage.clear();
+  }
+
+  async function createARoom(roomName) {
+    if ("" === roomName) {
+      alert("방 제목을 입력해 주십시요.");
+      return;
+    } else {
+      await dispatch(createRoom(roomName));
+      dispatch(readAllRooms());
+      setRoomTitle("");
+    }
   }
 
   function enterRoom(roomId) {}
@@ -49,7 +63,24 @@ function FriendList() {
         <hr></hr>
         <div style={firstRowLine}>나의 닉네임</div>
         <hr />
-        채팅방목록
+        <div>
+          채팅방 목록{" "}
+          <input
+            type="text"
+            value={roomTitle}
+            onChange={(e) => {
+              setRoomTitle(e.target.value);
+            }}
+          ></input>{" "}
+          <button
+            type="button"
+            onClick={() => {
+              createARoom(roomTitle);
+            }}
+          >
+            채팅방 만들기
+          </button>
+        </div>
         <hr />
         {chatrooms?.map((room) => {
           return (
