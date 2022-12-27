@@ -68,7 +68,11 @@ function Chat() {
       <StBorder>
         <StChatBorder>
           {viewMessages?.map((item) => {
-            return <div>{item.message}</div>;
+            return (
+              <div>
+                {item.sender} :{item.message}
+              </div>
+            );
           })}
         </StChatBorder>
         <hr></hr>
