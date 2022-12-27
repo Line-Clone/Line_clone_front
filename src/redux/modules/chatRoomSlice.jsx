@@ -25,7 +25,6 @@ export const readAllRooms = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await authInstance.get("/chat/rooms");
-      console.log("rooms:", response);
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

@@ -41,7 +41,7 @@ function FriendList() {
       alert("방 제목을 입력해 주십시요.");
       return;
     } else {
-      await dispatch(createRoom(roomName));
+      dispatch(createRoom(roomName));
       dispatch(readAllRooms());
       setRoomTitle("");
     }
