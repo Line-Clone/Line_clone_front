@@ -6,7 +6,10 @@ import React from "react";
 
 const initialState = {
   rooms: [],
-  room: {},
+  userInfo: {
+    username: "",
+    nickname: "",
+  },
   isLoading: false,
   error: null,
 };
@@ -28,7 +31,6 @@ export const readAllRooms = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await authInstance.get("/chat/rooms");
-      console.log("rooms:", response);
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -42,7 +44,10 @@ export const readOneRoom = createAsyncThunk(
     try {
       const response = await authInstance.get(`/api/chat/room/${roomId}`);
       console.log("readOne:", response);
-      return thunkAPI.fulfillWithValue(response.data);
+      return thunkAPI.fulfillWithValue({
+        rooms: response.data.chatRoomList,
+        userinfo: response.data.userinfo,
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -80,7 +85,8 @@ const chatRoomsSlice = createSlice({
     },
     [readOneRoom.fulfilled]: (state, action) => {
       console.log("oneroom payload:", action.payload);
-      state.rooms.room = action.payload;
+      state.rooms = action.payload.rooms;
+      state.userinfo = action.payload.userinfo;
     },
     [createRoom.pending]: (state) => {
       state.isLoading = true;
