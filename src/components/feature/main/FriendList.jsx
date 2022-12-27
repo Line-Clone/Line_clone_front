@@ -10,11 +10,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
 import { useNavigate } from "react-router";
 import { createRoom } from "../../../redux/modules/chatRoomSlice";
+import { useState } from "react";
 
 function FriendList() {
-  const state = useSelector((state) => state);
-  console.log("전체 state:", state);
-
   const chatrooms = useSelector((state) => state.rooms.rooms);
   console.log("chatrooms:", chatrooms);
 
@@ -27,7 +25,6 @@ function FriendList() {
     navigate("/login");
     localStorage.clear();
   }
-
 
   function enterRoom(roomId) {
     console.log("id:", roomId);
@@ -49,7 +46,6 @@ function FriendList() {
       setRoomTitle("");
     }
   }
-
 
   useEffect(() => {
     dispatch(readAllRooms());

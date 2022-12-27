@@ -1,58 +1,99 @@
-import React, { useState, useEffect } from "react";
-import Stomp from "stompjs";
+import React, { useEffect } from "react";
+import styled from "styled-components";
 import SockJS from "sockjs-client";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { readOneRoom } from "../../../redux/modules/chatRoomSlice";
-
-export const message = {
-  username: "",
-  content: "",
-};
+import Stomp from "stompjs";
+import { useParams } from "react-router-dom";
 
 function Chat() {
-  let sockJS = new SockJS("/ws/chat");
-  let stomp = Stomp.over(sockJS);
-  let reconnect = 0;
-
-  const addMessage = (message) => {
-    setContent((prev) => [...prev, message]);
-  };
-
+  const SockJs = new SockJS("http://sangt.shop/ws/chat");
+  const ws = Stomp.over(SockJs);
+  const reconnect = 0;
+  const param = useParams();
+  const rommId = param.id;
+  const sender = localStorage.getItem("wschat.nick");
+  function roomSubscribe() {
+    ws.connect(
+      {},
+      function (frame) {
+        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
+          const recv = JSON.parse(response.body);
+          console.log(recv);
+        });
+        ws.send(
+          "ws://sangt.shop/app/chat/message",
+          {},
+          JSON.stringify({
+            type: "ENTER",
+            roomId: rommId,
+            sender: sender,
+          })
+        );
+      },
+      function (error) {
+        if (reconnect++ <= 5) {
+          setTimeout(function () {
+            SockJs = new SockJS("http://sangt.shop/ws/chat");
+            ws = Stomp.over(SockJs);
+            roomSubscribe();
+          }, 10 * 1000);
+        }
+      }
+    );
+  }
   useEffect(() => {
-    stomp.connect({}, () => {
-      stomp.subscribe("/topic/roomId", (data) => {
-        console.log("sock data:", data);
-        const newMessage = JSON.parse(data);
-        addMessage(newMessage);
-      });
-    });
-  });
-
-  const [username, setUsername] = useState();
-  const [content, setContent] = useState();
-  const [nickname, setNickname] = useState();
-  const [message, setMessage] = useState();
-
-  const { id } = useParams();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(readOneRoom(id));
-  });
-
-  return <div>ahhhhhhh</div>;
+    roomSubscribe();
+  }, []);
+  return (
+    <StTopContainer>
+      <StBorder>
+        <StChatBorder></StChatBorder>
+        <hr></hr>
+        <StBottomBorder>
+          <div>
+            <StText></StText>
+          </div>
+          <div>
+            <button>전송</button>
+          </div>
+        </StBottomBorder>
+      </StBorder>
+    </StTopContainer>
+  );
 }
 
 export default Chat;
 
-// ws는 (TCP, UCP가 양방향 프로토콜의 이름인데 웹소켓은 TCP를 사용하는 프로토콜의 이름)
+const StTopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
 
-// 라이브러리 사용 시 공식 문서를 먼저 봐라 -> 공식 문서의 예제 코드를 보자 (sockJs)
-// 라이브러리 이름 + 프레임워크 이름을 붙여서 검색
-// 채팅에서 중요한 개념 - subscribe (해당 채팅방에서만 보낼 수 있어야 한다. 통신 연결 시점을 잘 잡아야 하는데, 채팅방에 들어와서부터 구독을 해야한다)
-// 웹에서 구독은 데이터를 가져와서 사용하는 것.
-// 서버가 가진 내용을 구독한다 = 서버가 가진 채팅 데이터를 가져온다.
-// vue에서 순서를 보고 어떤 기능을 썼는지만 보고, 리액트 예제 코드를 더 잘 봐라
-// useSelector도 스토어를 구독하고 있다 - 데이터를 가져와서 사용한다
+  gap: 50px;
+`;
+
+const StBorder = styled.div`
+  border: 1px solid #484848;
+  height: 600px;
+  width: 800px;
+`;
+
+const StChatBorder = styled.div`
+  height: 450px;
+  width: 800px;
+`;
+
+const StBottomBorder = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  height: 150px;
+  width: 800px;
+`;
+
+const StText = styled.textarea`
+  height: 100px;
+  width: 650px;
+`;
