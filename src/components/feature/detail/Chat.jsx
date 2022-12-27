@@ -5,12 +5,13 @@ import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
 
 function Chat() {
-  const SockJs = new SockJS("http://sangt.shop/ws/chat");
-  const ws = Stomp.over(SockJs);
-  const reconnect = 0;
+  let SockJs = new SockJS("http://sangt.shop/ws/chat");
+  let ws = Stomp.over(SockJs);
+  let reconnect = 0;
   const param = useParams();
   const rommId = param.id;
   const sender = localStorage.getItem("wschat.nick");
+
   function roomSubscribe() {
     ws.connect(
       {},
@@ -42,7 +43,7 @@ function Chat() {
   }
   useEffect(() => {
     roomSubscribe();
-  }, []);
+  });
   return (
     <StTopContainer>
       <StBorder>

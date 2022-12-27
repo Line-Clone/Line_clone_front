@@ -49,7 +49,7 @@ function FriendList() {
 
   useEffect(() => {
     dispatch(readAllRooms());
-  }, []);
+  });
 
   return (
     <div style={OuterStyle}>
