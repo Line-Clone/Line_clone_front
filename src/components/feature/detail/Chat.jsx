@@ -5,13 +5,15 @@ import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
 
 function Chat() {
-  const SockJs = new SockJS("http://sangt.shop/ws/chat");
-  const ws = Stomp.over(SockJs);
-  const reconnect = 0;
+  let SockJs = new SockJS("http://sangt.shop/ws/chat");
+  let ws = Stomp.over(SockJs);
+  let reconnect = 0;
   const param = useParams();
   const rommId = param.id;
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
+  const messages = [];
+  const [viewMessages, setViewMessages] = useState([]);
   function sendMessage() {
     ws.send(
       "/app/chat/message",
@@ -31,7 +33,8 @@ function Chat() {
       function (frame) {
         ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
           const recv = JSON.parse(response.body);
-          console.log(recv);
+          messages.push(recv);
+          setViewMessages(messages);
         });
         ws.send(
           "/app/chat/message",
@@ -54,13 +57,20 @@ function Chat() {
       }
     );
   }
+  //   console.log("msgs", messages);
+
   useEffect(() => {
     roomSubscribe();
   }, []);
+
   return (
     <StTopContainer>
       <StBorder>
-        <StChatBorder></StChatBorder>
+        <StChatBorder>
+          {viewMessages?.map((item) => {
+            return <div>{item.message}</div>;
+          })}
+        </StChatBorder>
         <hr></hr>
         <StBottomBorder>
           <div>
