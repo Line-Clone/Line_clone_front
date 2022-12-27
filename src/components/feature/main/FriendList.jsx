@@ -49,7 +49,7 @@ function FriendList() {
 
   useEffect(() => {
     dispatch(readAllRooms());
-  });
+  }, []);
 
   return (
     <div style={OuterStyle}>
@@ -94,7 +94,7 @@ function FriendList() {
         <hr />
         {chatrooms?.map((room) => {
           return (
-            <div style={rowLine}>
+            <div style={rowLine} key={room.roomId}>
               {" "}
               <AccountCircleIcon />
               {room.roomName}

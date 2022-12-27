@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
@@ -9,23 +9,24 @@ function Chat() {
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
   const param = useParams();
-  const rommId = param.id;
+  const roomId = param.id;
   const sender = localStorage.getItem("wschat.nick");
+  const [message, setMessage] = useState("");
 
   function roomSubscribe() {
     ws.connect(
       {},
       function (frame) {
-        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
+        ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
           const recv = JSON.parse(response.body);
-          console.log(recv);
+          console.log("recv 변수:", recv);
         });
         ws.send(
           "ws://sangt.shop/app/chat/message",
           {},
           JSON.stringify({
             type: "ENTER",
-            roomId: rommId,
+            roomId: roomId,
             sender: sender,
           })
         );
@@ -43,7 +44,23 @@ function Chat() {
   }
   useEffect(() => {
     roomSubscribe();
-  });
+  }, []);
+
+  const sendMessage = () => {
+    ws.send(
+      "/app/chat/message",
+      {},
+      JSON.stringify({
+        type: "TALK",
+        roomId: roomId,
+        sender: sender,
+        message: message,
+      }),
+      setMessage(""),
+      console.log("message:", message)
+    );
+  };
+
   return (
     <StTopContainer>
       <StBorder>
@@ -51,10 +68,13 @@ function Chat() {
         <hr></hr>
         <StBottomBorder>
           <div>
-            <StText></StText>
+            <StText
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+            ></StText>
           </div>
           <div>
-            <button>전송</button>
+            <button onClick={sendMessage}>전송</button>
           </div>
         </StBottomBorder>
       </StBorder>
