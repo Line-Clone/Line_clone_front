@@ -3,18 +3,21 @@ import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getChat } from "../../../redux/modules/chatSlice";
-
+import { readBeforeChat } from "../../../redux/modules/chatSlice";
+import { useDispatch } from "react-redux/es/exports";
+import { useSelector } from "react-redux/es/hooks/useSelector";
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
+  const dispatch = useDispatch();
   const param = useParams();
-  const roomId = param.id;
+  const rommId = param.id;
+  const beforechat = useSelector((state) => state.chat.messageList);
+  console.log("beforechat:", beforechat);
+  const messages = [];
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
-  const messages = [];
   const [viewMessages, setViewMessages] = useState([]);
   const chatlist = useSelector((state) => state.rooms);
   console.log("chatlist:", chatlist);
@@ -41,7 +44,7 @@ function Chat() {
       sender: recv.type === "ENTER" ? "[알림]" : recv.sender,
       message: recv.message,
     });
-    setViewMessages(messages);
+    setViewMessages([...messages]);
   }
 
   function roomSubscribe() {
@@ -51,8 +54,6 @@ function Chat() {
         ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
           var recv = JSON.parse(response.body);
           recvMessage(recv);
-          messages.push(recv);
-          setViewMessages(messages);
         });
         ws.send(
           "/app/chat/message",
@@ -75,9 +76,9 @@ function Chat() {
       }
     );
   }
-  //   console.log("msgs", messages);
 
   useEffect(() => {
+    dispatch(readBeforeChat(param.id));
     roomSubscribe();
   }, []);
 
@@ -87,45 +88,63 @@ function Chat() {
 
   return (
     <StTopContainer>
-      <StTopBorder>
-        {viewMessages?.map((item) => {
-          if (localStorage.getItem("wschat.nick") === item.sender) {
-            return (
-              <WriterBox>
-                {item.sender} :{item.message}
-              </WriterBox>
-            );
-          } else {
-            return (
-              <WriterBox>
-                {item.sender} :{item.message}
-              </WriterBox>
-            );
-          }
-        })}
-      </StTopBorder>
-      <StBottomBorder>
-        <div>
-          <input
-            type="text"
-            value={message}
-            onChange={(event) => {
-              setMessage(event.target.value);
-            }}
-          ></input>
-        </div>
-        <div>
-          <button
-            type="button"
-            onClick={() => {
-              sendMessage();
-              setMessage("");
-            }}
-          >
-            전송
-          </button>
-        </div>
-      </StBottomBorder>
+      <StBorder>
+        <StChatBorder>
+          {beforechat?.map((item, index) => {
+            if (localStorage.getItem("wschat.nick") === item.sender) {
+              return (
+                <div style={writerBox} key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            } else {
+              return (
+                <div key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            }
+          })}
+          {viewMessages?.map((item, index) => {
+            if (localStorage.getItem("wschat.nick") === item.sender) {
+              return (
+                <div style={writerBox} key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            } else {
+              return (
+                <div key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            }
+          })}
+        </StChatBorder>
+        <hr></hr>
+        <StBottomBorder>
+          <div>
+            <input
+              type="text"
+              value={message}
+              onChange={(event) => {
+                setMessage(event.target.value);
+              }}
+            ></input>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                sendMessage();
+                setMessage("");
+              }}
+            >
+              전송
+            </button>
+          </div>
+        </StBottomBorder>
+      </StBorder>
     </StTopContainer>
   );
 }

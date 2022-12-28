@@ -1,43 +1,47 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { baseURL, instance } from "../../core/api/axios";
 import { authInstance } from "../../core/api/axios";
+import React from "react";
 
 const initialState = {
-  id: 0,
+  id: 11,
   roomName: "",
-  createUserName: "",
-  messageList: [
-    {
-      sender: "",
-      message: "",
-    },
-  ],
+  createUserName: null,
+  messageList: [],
   isLoading: false,
   error: null,
 };
 
-export const getChat = createAsyncThunk(
-  "chat/getChat",
-  async (roomId, thunkAPI) => {
-    console.log("chat 넘어온 값:", roomId);
+export const readBeforeChat = createAsyncThunk(
+  "chat/READ_BEFORE_CHAT",
+  async (payload, thunkAPI) => {
     try {
-      const response = await authInstance.get(`/api/chat/room/${roomId}`);
-      console.log("chat response.data:", response.data);
-      return thunkAPI.fulfillWithValue(response.data);
+      const response = await authInstance.get(`/chat/room/join/${payload}`);
+      console.log(response.data);
+      console.log(response.data.messageList);
+      return thunkAPI.fulfillWithValue(response.data.messageList);
     } catch (error) {
-      console.log("get chat error:", error);
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-export const chatSlice = createSlice({
+const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {},
   extraReducers: {
-    [getChat.fulfilled]: (state, action) => {
-      console.log("chat action:", action.payload);
+    [readBeforeChat.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [readBeforeChat.fulfilled]: (state, action) => {
+      state.isLoading = false;
       state.messageList = action.payload;
+    },
+    [readBeforeChat.rejected]: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
     },
   },
 });
