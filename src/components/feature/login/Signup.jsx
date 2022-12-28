@@ -3,7 +3,8 @@ import styled from "styled-components";
 import Kakao360 from "../../../assets/img/kakao360.png";
 import { useForm } from "react-hook-form";
 import { postSignup } from "../../../redux/modules/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import TextButton from "../../common/TextButton";
 
 function Signup() {
   const {
@@ -29,7 +30,7 @@ function Signup() {
           <img
             alt="banner"
             src={Kakao360}
-            style={{ width: "9rem", alignItems: "center" }}
+            style={{ width: "9rem", paddingTop: "50px" }}
           />
         </div>
         <StInputGroup>
@@ -93,9 +94,9 @@ function Signup() {
           <div>
             <input type="submit" value="회원가입" />
           </div>
-          <StLink>
-            <a href="/login">이메일로 로그인</a>
-          </StLink>
+          <Link to="/login">
+            <TextButton>이메일로 로그인</TextButton>
+          </Link>
         </StButtonGroup>
       </StTopContainer>
     </form>
@@ -105,11 +106,20 @@ function Signup() {
 export default Signup;
 
 const StTopContainer = styled.div`
-  display: grid;
-  place-items: center;
-  max-width: 500px;
+  outline: 1px solid rgb(230, 230, 230);
+  border-radius: 5px;
   margin: 20px auto;
-  padding: 50px 50px 150px 50px;
+
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 700px;
+
+  box-sizing: contentBox;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 
   background-color: #f7e600;
 
@@ -117,8 +127,8 @@ const StTopContainer = styled.div`
 `;
 
 const StInputGroup = styled.div`
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
   text-align: center;
   gap: 5px;
   input:focus {
@@ -132,8 +142,8 @@ const StInputGroup = styled.div`
 `;
 
 const StButtonGroup = styled.div`
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
   input {
     width: 15rem;
     height: 2rem;
@@ -147,12 +157,4 @@ const StButtonGroup = styled.div`
   }
 
   gap: 20px;
-`;
-
-const StLink = styled.div`
-  a {
-    font-weight: 400;
-    text-decoration: none;
-    color: rgb(54, 29, 28);
-  }
 `;

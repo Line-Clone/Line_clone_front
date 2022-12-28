@@ -31,7 +31,7 @@ function Login() {
           <img
             alt="banner"
             src={Kakao360}
-            style={{ width: "9rem", alignItems: "center" }}
+            style={{ width: "9rem", paddingTop: "50px" }}
           />
         </div>
         <StInputGroup>
@@ -83,11 +83,20 @@ function Login() {
 export default Login;
 
 const StTopContainer = styled.div`
-  display: grid;
-  place-items: center;
-  max-width: 500px;
+  outline: 1px solid rgb(230, 230, 230);
+  border-radius: 5px;
   margin: 20px auto;
-  padding: 50px 50px 150px 50px;
+
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 700px;
+
+  box-sizing: contentBox;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 
   background-color: #f7e600;
 
