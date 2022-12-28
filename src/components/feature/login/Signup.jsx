@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Banner from "../../../assets/img/line_banner.png";
+import Kakao360 from "../../../assets/img/kakao360.png";
 import { useForm } from "react-hook-form";
 import { postSignup } from "../../../redux/modules/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -23,11 +23,15 @@ function Signup() {
   };
 
   return (
-    <StTopContainer>
-      <div>
-        <img alt="banner" src={Banner} height="150px" />
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <StTopContainer>
+        <div>
+          <img
+            alt="banner"
+            src={Kakao360}
+            style={{ width: "9rem", alignItems: "center" }}
+          />
+        </div>
         <StInputGroup>
           <div>
             <input
@@ -87,42 +91,61 @@ function Signup() {
         </StInputGroup>
         <StButtonGroup>
           <div>
-            <button>회원가입</button>
+            <input type="submit" value="회원가입" />
           </div>
           <StLink>
             <a href="/login">이메일로 로그인</a>
           </StLink>
         </StButtonGroup>
-      </form>
-    </StTopContainer>
+      </StTopContainer>
+    </form>
   );
 }
 
 export default Signup;
 
 const StTopContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 100px;
+  display: grid;
+  place-items: center;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 50px 50px 150px 50px;
+
+  background-color: #f7e600;
 
   gap: 50px;
 `;
 
 const StInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 5px;
+  input:focus {
+    outline: none;
+  }
+  * {
+    width: 15rem;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
 `;
 
 const StButtonGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
+  input {
+    width: 15rem;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
+  input:hover {
+    transition: 0.2s;
+    background-color: rgb(54, 29, 28);
+    border: none;
+    color: white;
+  }
 
-  margin: auto;
   gap: 20px;
 `;
 
@@ -130,6 +153,6 @@ const StLink = styled.div`
   a {
     font-weight: 400;
     text-decoration: none;
-    color: #4d4f50;
+    color: rgb(54, 29, 28);
   }
 `;

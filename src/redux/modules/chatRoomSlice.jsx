@@ -3,7 +3,10 @@ import { authInstance } from "../../core/api/axios";
 
 const initialState = {
   rooms: [],
-  room: {},
+  userInfo: {
+    username: "",
+    nickname: "",
+  },
   isLoading: false,
   error: null,
 };
@@ -25,7 +28,13 @@ export const readAllRooms = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await authInstance.get("/chat/rooms");
-      return thunkAPI.fulfillWithValue(response.data);
+      console.log(response.data);
+      console.log(response.data.userInfo);
+      console.log(response.data.chatRoomList);
+      return thunkAPI.fulfillWithValue({
+        rooms: response.data.chatRoomList,
+        userInfo: response.data.userInfo,
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -38,7 +47,10 @@ export const readOneRoom = createAsyncThunk(
     try {
       const response = await authInstance.get(`/api/chat/room/${roomId}`);
       console.log("readOne:", response);
-      return thunkAPI.fulfillWithValue(response.data);
+      return thunkAPI.fulfillWithValue({
+        rooms: response.data.chatRoomList,
+        userinfo: response.data.userinfo,
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -67,8 +79,8 @@ const chatRoomsSlice = createSlice({
     },
     [readAllRooms.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action.payload);
-      state.rooms = action.payload;
+      state.rooms = action.payload.rooms;
+      state.userInfo = action.payload.userInfo;
     },
     [readAllRooms.rejected]: (state, action) => {
       state.isLoading = false;
@@ -76,7 +88,8 @@ const chatRoomsSlice = createSlice({
     },
     [readOneRoom.fulfilled]: (state, action) => {
       console.log("oneroom payload:", action.payload);
-      state.rooms.room = action.payload;
+      state.rooms = action.payload.rooms;
+      state.userinfo = action.payload.userinfo;
     },
     [createRoom.pending]: (state) => {
       state.isLoading = true;

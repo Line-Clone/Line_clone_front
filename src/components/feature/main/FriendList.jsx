@@ -14,7 +14,7 @@ import { useState } from "react";
 
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
-  console.log("chatrooms:", chatrooms);
+  const userInfo = useSelector((state) => state.rooms.userInfo);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,13 +27,9 @@ function FriendList() {
   }
 
   function enterRoom(roomId) {
-    console.log("id:", roomId);
-    const nick = prompt("닉네임을 적어주세요.");
-    if (nick !== "") {
-      localStorage.setItem("wschat.nick", nick);
-      localStorage.setItem("wschat.roomId", roomId);
-      navigate(`/chat/room/${roomId}`);
-    }
+    localStorage.setItem("wschat.nick", userInfo.nickname);
+    localStorage.setItem("wschat.roomId", roomId);
+    navigate(`/chat/room/${roomId}`);
   }
 
   async function createARoom(roomName) {

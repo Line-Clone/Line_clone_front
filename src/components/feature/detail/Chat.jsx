@@ -9,24 +9,43 @@ function Chat() {
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
   const param = useParams();
-  const roomId = param.id;
+  const rommId = param.id;
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
+  const messages = [];
+  const [viewMessages, setViewMessages] = useState([]);
+
+  console.log("message:", message);
+  console.log("view:", viewMessages);
+
+  function sendMessage() {
+    ws.send(
+      "/app/chat/message",
+      {},
+      JSON.stringify({
+        type: "TALK",
+        roomId: rommId,
+        sender: sender,
+        message: message,
+      })
+    );
+  }
 
   function roomSubscribe() {
     ws.connect(
       {},
       function (frame) {
-        ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
+        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
           const recv = JSON.parse(response.body);
-          console.log("recv 변수:", recv);
+          messages.push(recv);
+          setViewMessages(messages);
         });
         ws.send(
-          "ws://sangt.shop/app/chat/message",
+          "/app/chat/message",
           {},
           JSON.stringify({
             type: "ENTER",
-            roomId: roomId,
+            roomId: rommId,
             sender: sender,
           })
         );
@@ -42,39 +61,41 @@ function Chat() {
       }
     );
   }
+  //   console.log("msgs", messages);
+
   useEffect(() => {
     roomSubscribe();
   }, []);
 
-  const sendMessage = () => {
-    ws.send(
-      "/app/chat/message",
-      {},
-      JSON.stringify({
-        type: "TALK",
-        roomId: roomId,
-        sender: sender,
-        message: message,
-      }),
-      setMessage(""),
-      console.log("message:", message)
-    );
-  };
-
   return (
     <StTopContainer>
       <StBorder>
-        <StChatBorder></StChatBorder>
+        <StChatBorder>
+          {viewMessages?.map((item) => {
+            return <div>{item.message}</div>;
+          })}
+        </StChatBorder>
         <hr></hr>
         <StBottomBorder>
           <div>
-            <StText
+            <input
+              type="text"
               value={message}
-              onChange={(event) => setMessage(event.target.value)}
-            ></StText>
+              onChange={(event) => {
+                setMessage(event.target.value);
+              }}
+            ></input>
           </div>
           <div>
-            <button onClick={sendMessage}>전송</button>
+            <button
+              type="button"
+              onClick={() => {
+                sendMessage();
+                setMessage("");
+              }}
+            >
+              전송
+            </button>
           </div>
         </StBottomBorder>
       </StBorder>
