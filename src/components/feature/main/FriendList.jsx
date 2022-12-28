@@ -12,6 +12,7 @@ import TextButton from "../../common/TextButton";
 
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
+  console.log("chatrooms:", chatrooms);
   const userInfo = useSelector((state) => state.rooms.userInfo);
 
   const dispatch = useDispatch();
@@ -35,16 +36,15 @@ function FriendList() {
       alert("방 제목을 입력해 주십시요.");
       return;
     } else {
-      dispatch(createRoom(roomName));
+      await dispatch(createRoom(roomName));
       dispatch(readAllRooms());
       setRoomTitle("");
     }
   }
 
   useEffect(() => {
-    console.log("id", localStorage.getItem("id"));
     dispatch(readAllRooms());
-  }, []);
+  }, [dispatch]);
 
   return (
     <OuterStyle>

@@ -41,34 +41,6 @@ export const readAllRooms = createAsyncThunk(
   }
 );
 
-export const readOneRoom = createAsyncThunk(
-  "room/readOneRoom",
-  async (roomId, thunkAPI) => {
-    try {
-      const response = await authInstance.get(`/api/chat/room/${roomId}`);
-      console.log("readOne:", response);
-      return thunkAPI.fulfillWithValue({
-        rooms: response.data.chatRoomList,
-        userinfo: response.data.userinfo,
-      });
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-// export const getMemeById = createAsyncThunk(
-//   "meme/GET_MEME_BY_ID",
-//   async (payload, thunkAPI) => {
-//     try {
-//       const data = await baseURL.get(`/api/memes/${payload}`);
-//       return thunkAPI.fulfillWithValue(data.data);
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error);
-//     }
-//   }
-// );
-
 const chatRoomsSlice = createSlice({
   name: "rooms",
   initialState,
@@ -85,11 +57,6 @@ const chatRoomsSlice = createSlice({
     [readAllRooms.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
-    },
-    [readOneRoom.fulfilled]: (state, action) => {
-      console.log("oneroom payload:", action.payload);
-      state.rooms = action.payload.rooms;
-      state.userinfo = action.payload.userinfo;
     },
     [createRoom.pending]: (state) => {
       state.isLoading = true;
