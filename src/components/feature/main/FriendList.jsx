@@ -13,8 +13,8 @@ import { createRoom } from "../../../redux/modules/chatRoomSlice";
 import { useState } from "react";
 
 function FriendList() {
-  const chatrooms = useSelector((state) => state.rooms.rooms.chatRoomList);
-  const userInfo = useSelector((state) => state.rooms.rooms.userInfo);
+  const chatrooms = useSelector((state) => state.rooms.rooms);
+  const userInfo = useSelector((state) => state.rooms.userInfo);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -90,7 +90,7 @@ function FriendList() {
         <hr />
         {chatrooms?.map((room) => {
           return (
-            <div style={rowLine}>
+            <div style={rowLine} key={room.roomId}>
               {" "}
               <AccountCircleIcon />
               {room.roomName}

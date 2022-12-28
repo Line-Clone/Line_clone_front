@@ -14,6 +14,10 @@ function Chat() {
   const [message, setMessage] = useState("");
   const messages = [];
   const [viewMessages, setViewMessages] = useState([]);
+
+  console.log("message:", message);
+  console.log("view:", viewMessages);
+
   function sendMessage() {
     ws.send(
       "/app/chat/message",
@@ -68,7 +72,11 @@ function Chat() {
       <StBorder>
         <StChatBorder>
           {viewMessages?.map((item) => {
-            return <div>{item.message}</div>;
+            return (
+              <div>
+                {item.sender} - {item.message}
+              </div>
+            );
           })}
         </StChatBorder>
         <hr></hr>
