@@ -4,7 +4,6 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getChat } from "../../../redux/modules/chatSlice";
 
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
