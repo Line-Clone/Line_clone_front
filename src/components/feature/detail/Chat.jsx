@@ -3,17 +3,21 @@ import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getChat } from "../../../redux/modules/chatSlice";
 
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
   const param = useParams();
-  const rommId = param.id;
+  const roomId = param.id;
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
   const messages = [];
   const [viewMessages, setViewMessages] = useState([]);
+  const chatlist = useSelector((state) => state.rooms);
+  console.log("chatlist:", chatlist);
 
   console.log("message:", message);
   console.log("view:", viewMessages);
@@ -24,7 +28,7 @@ function Chat() {
       {},
       JSON.stringify({
         type: "TALK",
-        roomId: rommId,
+        roomId: roomId,
         sender: sender,
         message: message,
       })
@@ -35,7 +39,7 @@ function Chat() {
     ws.connect(
       {},
       function (frame) {
-        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
+        ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
           const recv = JSON.parse(response.body);
           messages.push(recv);
           setViewMessages(messages);
@@ -45,7 +49,7 @@ function Chat() {
           {},
           JSON.stringify({
             type: "ENTER",
-            roomId: rommId,
+            roomId: roomId,
             sender: sender,
           })
         );
@@ -66,6 +70,10 @@ function Chat() {
   useEffect(() => {
     roomSubscribe();
   }, []);
+
+  // useEffect(() => {
+  //   dispatch(getChat(roomId));
+  // }, []);
 
   return (
     <StTopContainer>
