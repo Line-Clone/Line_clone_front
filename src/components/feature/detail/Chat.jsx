@@ -27,14 +27,24 @@ function Chat() {
     );
   }
 
+  function recvMessage(recv) {
+    messages.push({
+      type: recv.type,
+      sender: recv.type == "ENTER" ? "[알림]" : recv.sender,
+      message: recv.message,
+    });
+    setViewMessages(messages);
+  }
+
   function roomSubscribe() {
     ws.connect(
       {},
       function (frame) {
         ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
-          const recv = JSON.parse(response.body);
-          messages.push(recv);
-          setViewMessages(messages);
+          var recv = JSON.parse(response.body);
+          recvMessage(recv);
+          // messages.push(recv);
+          // setViewMessages(messages);
         });
         ws.send(
           "/app/chat/message",
@@ -68,11 +78,19 @@ function Chat() {
       <StBorder>
         <StChatBorder>
           {viewMessages?.map((item) => {
-            return (
-              <div>
-                {item.sender} :{item.message}
-              </div>
-            );
+            if (localStorage.getItem("wschat.nick") === item.sender) {
+              return (
+                <div style={writerBox}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            } else {
+              return (
+                <div>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            }
           })}
         </StChatBorder>
         <hr></hr>
@@ -139,3 +157,7 @@ const StText = styled.textarea`
   height: 100px;
   width: 650px;
 `;
+
+const writerBox = {
+  color: "red",
+};
