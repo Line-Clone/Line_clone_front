@@ -221,7 +221,6 @@ const StTextarea = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-left: 20px;
   text-align: left;
   * {
     background-color: white;
