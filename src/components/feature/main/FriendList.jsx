@@ -42,6 +42,7 @@ function FriendList() {
   }
 
   useEffect(() => {
+    console.log("id", localStorage.getItem("id"));
     dispatch(readAllRooms());
   }, []);
 

@@ -20,12 +20,19 @@ function Login() {
     // const jsonData = JSON.stringify({ data });
     await postLogin(data).then(
       (response) => localStorage.setItem("id", response.headers.authorization),
-      navigation("/")
+      console.log("get item:", localStorage.getItem("id"))
+      // 비동기로 실행되는 함수는 순서를 잘 생각해야한다.
     );
   };
 
   return (
-    <form onSubmit={handleSubmit(onValid)}>
+    <form
+      onSubmit={handleSubmit((data) => {
+        onValid(data).then(() => {
+          navigation("/");
+        });
+      })}
+    >
       <StTopContainer>
         <div>
           <img

@@ -38,7 +38,7 @@ function Chat() {
   function recvMessage(recv) {
     messages.push({
       type: recv.type,
-      sender: recv.type == "ENTER" ? "[알림]" : recv.sender,
+      sender: recv.type === "ENTER" ? "[알림]" : recv.sender,
       message: recv.message,
     });
     setViewMessages(messages);
@@ -48,11 +48,11 @@ function Chat() {
     ws.connect(
       {},
       function (frame) {
-        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
+        ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
           var recv = JSON.parse(response.body);
           recvMessage(recv);
-          // messages.push(recv);
-          // setViewMessages(messages);
+          messages.push(recv);
+          setViewMessages(messages);
         });
         ws.send(
           "/app/chat/message",
@@ -87,48 +87,45 @@ function Chat() {
 
   return (
     <StTopContainer>
-      <StBorder>
-        <StChatBorder>
-          {viewMessages?.map((item) => {
-            if (localStorage.getItem("wschat.nick") === item.sender) {
-              return (
-                <div style={writerBox}>
-                  {item.sender} :{item.message}
-                </div>
-              );
-            } else {
-              return (
-                <div>
-                  {item.sender} :{item.message}
-                </div>
-              );
-            }
-          })}
-        </StChatBorder>
-        <hr></hr>
-        <StBottomBorder>
-          <div>
-            <input
-              type="text"
-              value={message}
-              onChange={(event) => {
-                setMessage(event.target.value);
-              }}
-            ></input>
-          </div>
-          <div>
-            <button
-              type="button"
-              onClick={() => {
-                sendMessage();
-                setMessage("");
-              }}
-            >
-              전송
-            </button>
-          </div>
-        </StBottomBorder>
-      </StBorder>
+      <StTopBorder>
+        {viewMessages?.map((item) => {
+          if (localStorage.getItem("wschat.nick") === item.sender) {
+            return (
+              <WriterBox>
+                {item.sender} :{item.message}
+              </WriterBox>
+            );
+          } else {
+            return (
+              <WriterBox>
+                {item.sender} :{item.message}
+              </WriterBox>
+            );
+          }
+        })}
+      </StTopBorder>
+      <StBottomBorder>
+        <div>
+          <input
+            type="text"
+            value={message}
+            onChange={(event) => {
+              setMessage(event.target.value);
+            }}
+          ></input>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              sendMessage();
+              setMessage("");
+            }}
+          >
+            전송
+          </button>
+        </div>
+      </StBottomBorder>
     </StTopContainer>
   );
 }
@@ -136,40 +133,43 @@ function Chat() {
 export default Chat;
 
 const StTopContainer = styled.div`
+  outline: 1px solid rgb(230, 230, 230);
+  border-radius: 5px;
+  margin: 20px auto;
+
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 700px;
+
+  box-sizing: contentBox;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const StTopBorder = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  margin-top: 50px;
+  width: 500px;
+  height: 35rem;
 
-  gap: 50px;
-`;
-
-const StBorder = styled.div`
-  border: 1px solid #484848;
-  height: 600px;
-  width: 800px;
-`;
-
-const StChatBorder = styled.div`
-  height: 450px;
-  width: 800px;
+  border: 1px solid red;
 `;
 
 const StBottomBorder = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
+
+  width: 500px;
+  height: 10rem;
+
   gap: 20px;
-  height: 150px;
-  width: 800px;
 `;
 
-const StText = styled.textarea`
-  height: 100px;
-  width: 650px;
+const WriterBox = styled.div`
+  color: black;
 `;
-
-const writerBox = {
-  color: "red",
-};
