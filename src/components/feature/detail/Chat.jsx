@@ -3,16 +3,21 @@ import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { useParams } from "react-router-dom";
-
+import { readBeforeChat } from "../../../redux/modules/chatSlice";
+import { useDispatch } from "react-redux/es/exports";
+import { useSelector } from "react-redux/es/hooks/useSelector";
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
+  const dispatch = useDispatch();
   const param = useParams();
   const rommId = param.id;
+  const beforechat = useSelector((state) => state.chat.messageList);
+  console.log("beforechat:", beforechat);
+  const messages = [];
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
-  const messages = [];
   const [viewMessages, setViewMessages] = useState([]);
   function sendMessage() {
     ws.send(
@@ -33,7 +38,7 @@ function Chat() {
       sender: recv.type == "ENTER" ? "[알림]" : recv.sender,
       message: recv.message,
     });
-    setViewMessages(messages);
+    setViewMessages([...messages]);
   }
 
   function roomSubscribe() {
@@ -43,8 +48,6 @@ function Chat() {
         ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
           var recv = JSON.parse(response.body);
           recvMessage(recv);
-          // messages.push(recv);
-          // setViewMessages(messages);
         });
         ws.send(
           "/app/chat/message",
@@ -67,9 +70,9 @@ function Chat() {
       }
     );
   }
-  //   console.log("msgs", messages);
 
   useEffect(() => {
+    dispatch(readBeforeChat(param.id));
     roomSubscribe();
   }, []);
 
@@ -77,16 +80,31 @@ function Chat() {
     <StTopContainer>
       <StBorder>
         <StChatBorder>
-          {viewMessages?.map((item) => {
+          {beforechat?.map((item, index) => {
             if (localStorage.getItem("wschat.nick") === item.sender) {
               return (
-                <div style={writerBox}>
+                <div style={writerBox} key={index}>
                   {item.sender} :{item.message}
                 </div>
               );
             } else {
               return (
-                <div>
+                <div key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            }
+          })}
+          {viewMessages?.map((item, index) => {
+            if (localStorage.getItem("wschat.nick") === item.sender) {
+              return (
+                <div style={writerBox} key={index}>
+                  {item.sender} :{item.message}
+                </div>
+              );
+            } else {
+              return (
+                <div key={index}>
                   {item.sender} :{item.message}
                 </div>
               );
