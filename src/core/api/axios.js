@@ -9,11 +9,13 @@ export const authInstance = axios.create({
 });
 
 authInstance.interceptors.request.use((config) => {
-  if (config.headers === undefined) return;
   const token = localStorage.getItem("id");
   config.headers["Authorization"] = `${token}`;
   return config;
 });
+// 한번 수행되고 끝이 아니라 axios 내부에서 요청 할때마다 이게 실행된다 (id 값이 있는지 확인한다)
+// config는 axios 콘솔 찍었을 때 나오던 요청 config를 의미한다.
+// 기본으로 설정된 요청을 의미한다.
 
 export const resInterceptor = (response) => {
   return response;

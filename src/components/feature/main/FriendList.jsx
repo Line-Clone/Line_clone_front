@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
-import MinimizeIcon from "@mui/icons-material/Minimize";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CloseIcon from "@mui/icons-material/Close";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import talk from "../../../assets/img/talk.png";
 import PersonIcon from "@mui/icons-material/Person";
 import SmsIcon from "@mui/icons-material/Sms";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +8,7 @@ import { readAllRooms } from "../../../redux/modules/chatRoomSlice";
 import { useNavigate } from "react-router";
 import { createRoom } from "../../../redux/modules/chatRoomSlice";
 import { useState } from "react";
+import TextButton from "../../common/TextButton";
 
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
@@ -37,49 +35,47 @@ function FriendList() {
       alert("방 제목을 입력해 주십시요.");
       return;
     } else {
-      await dispatch(createRoom(roomName));
+      dispatch(createRoom(roomName));
       dispatch(readAllRooms());
       setRoomTitle("");
     }
   }
 
   useEffect(() => {
+    console.log("id", localStorage.getItem("id"));
     dispatch(readAllRooms());
   }, []);
 
   return (
-    <div style={OuterStyle}>
-      <div style={firstLine}>
+    <OuterStyle>
+      <nav>
         <div>
           <PersonIcon fontSize="large" />
         </div>
         <div>
           <SmsIcon fontSize="large" />
         </div>
-        <div></div>
-      </div>
-      <div style={secondtLine}>
         <div>
-          전체 친구
-          <MinimizeIcon />
-          <CheckBoxOutlineBlankIcon />
-          <CloseIcon />
-          <button onClick={onLogout}>로그아웃</button>
+          <TextButton onClick={onLogout}>로그아웃</TextButton>
         </div>
-        <hr></hr>
-        <div style={firstRowLine}>나의 닉네임</div>
-        <hr />
+      </nav>
+      <SecondLine>
+        <div style={{ fontSize: "20px", fontWeight: "bold" }}>Chats</div>
         <div>
-          채팅방 목록{" "}
           <input
             type="text"
             value={roomTitle}
+            placeholder="채팅방 제목을 입력해주세요."
             onChange={(e) => {
               setRoomTitle(e.target.value);
             }}
           ></input>{" "}
           <button
-            type="button"
+            style={{
+              backgroundColor: "rgb(230,230,230)",
+              border: "1px solid gray",
+              height: "1.8rem",
+            }}
             onClick={() => {
               createARoom(roomTitle);
             }}
@@ -87,55 +83,84 @@ function FriendList() {
             채팅방 만들기
           </button>
         </div>
-        <hr />
         {chatrooms?.map((room) => {
           return (
-            <div style={rowLine} key={room.roomId}>
-              <AccountCircleIcon />
-              {room.roomName}
-              <button
-                type="button"
+            <div>
+              <StButton
                 onClick={() => {
                   enterRoom(room.roomId);
                 }}
+                key={room.roomId}
               >
-                입장하기
-              </button>
+                {" "}
+                <img
+                  alt="talk"
+                  src={talk}
+                  style={{ marginRight: "20px", height: "2.5rem" }}
+                />
+                {room.roomName}
+              </StButton>
             </div>
           );
         })}
-      </div>
-    </div>
+      </SecondLine>
+    </OuterStyle>
   );
 }
 
 export default FriendList;
 
-const OuterStyle = {
-  border: "1px solid black",
-  margin: "0 auto",
-  maxWidth: "650px",
-  minWidth: "300px",
-  maxHeight: "1100px",
-  minHeight: "700px",
-  boxSizing: "contentBox",
-  display: "grid",
-  gridTemplateColumns: "60px 1fr",
-};
+const OuterStyle = styled.div`
+  outline: 1px solid rgb(230, 230, 230);
+  border-radius: 5px;
+  margin: 20px auto;
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 700px;
+  box-sizing: contentBox;
+  display: flex;
+  overflow-y: scroll;
+  nav {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background-color: rgb(230, 230, 230);
+    text-align: center;
+    padding-top: 30px;
+    gap: 30px;
+    position: fixed;
+    height: 670px;
+    width: 80px;
+  }
+`;
 
-const firstLine = {
-  border: "1px solid black",
-  backgroundColor: "green",
-  textAlign: "center",
-};
+const SecondLine = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 80px;
+  width: 100%;
 
-const secondtLine = {
-  border: "1px solid black",
-};
+  padding: 30px;
+  gap: 20px;
 
-const firstRowLine = {
-  height: "34px",
-};
-const rowLine = {
-  height: "50px",
-};
+  input {
+    width: 14rem;
+    height: 1.5rem;
+  }
+  button:hover {
+    background-color: #eeeeee;
+    border: none;
+  }
+`;
+
+const StButton = styled.button`
+  width: 100%;
+  height: 3.5rem;
+  border: none;
+  background-color: white;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
