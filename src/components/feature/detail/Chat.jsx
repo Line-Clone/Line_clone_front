@@ -42,8 +42,8 @@ function Chat() {
   function recvMessage(recv) {
     messages.push({
       type: recv.type,
-      sender: recv.type === "ENTER" ? "[알림]" : recv.sender,
-      message: recv.message,
+      sender: recv.type === "ENTER" ? "" : recv.sender,
+      message: recv.type === "ENTER" ? `[알림] ${recv.message}` : recv.message,
     });
     setViewMessages([...messages]);
   }
@@ -90,7 +90,7 @@ function Chat() {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
               <div>
-                <SenderName>{item.sender}</SenderName>
+                <RightSenderName>{item.sender}</RightSenderName>
                 <BeforeBox>
                   <div key={index}>{item.message}</div>
                 </BeforeBox>
@@ -99,11 +99,9 @@ function Chat() {
           } else {
             return (
               <div>
+                <LeftSenderName>{item.sender}</LeftSenderName>
                 <AfterBox key={index}>
-                  <div>
-                    {item.sender}
-                    {item.message}
-                  </div>
+                  <div>{item.message}</div>
                 </AfterBox>
               </div>
             );
@@ -113,20 +111,35 @@ function Chat() {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
               <div>
-                <SenderName>{item.sender}</SenderName>
+                <RightSenderName>{item.sender}</RightSenderName>
                 <BeforeBox key={index}>
                   <div>{item.message}</div>
                 </BeforeBox>
               </div>
             );
+          } else if (item.sender === "") {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(112, 101, 101, 0.5)",
+                  borderRadius: "10px",
+                  border: "none)",
+                  color: "rgba(207, 207, 207, 0.8)",
+                }}
+              >
+                {item.message}
+              </div>
+            );
           } else {
             return (
-              <AfterBox key={index}>
-                <div>
-                  {item.sender}
-                  {item.message}
-                </div>
-              </AfterBox>
+              <div>
+                <LeftSenderName>{item.sender}</LeftSenderName>
+                <AfterBox key={index}>
+                  <div>{item.message}</div>
+                </AfterBox>
+              </div>
             );
           }
         })}
@@ -208,7 +221,7 @@ const StBottomBorder = styled.div`
   background-color: white;
 
   button {
-    place-items: right;
+    align-items: flex-end;
     width: 5rem;
     height: 2.5rem;
 
@@ -306,12 +319,22 @@ const AfterBox = styled.div`
   }
 `;
 
-const SenderName = styled.div`
+const RightSenderName = styled.div`
   float: right;
   display: flex;
   flex-direction: column;
   align-content: flex-end;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
+  width: fit-content;
+  padding: 2px;
+`;
+
+const LeftSenderName = styled.div`
+  float: left;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  margin-left: 0.5rem;
   width: fit-content;
   padding: 2px;
 `;
