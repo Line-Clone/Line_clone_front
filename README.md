@@ -34,7 +34,7 @@
 
 ## 🛠 기술 스택
 
-### Back
+### ✨ Back-End
 - java
 - gradle
 - spring
@@ -45,7 +45,7 @@
 - mysql
 
 
-### Front
+### ✨ Front-End
 - javascript
 - react
 - redux
@@ -77,7 +77,7 @@
 
 
 
-## 📃 API 명세서
+## 📖 API 명세서
 
 [API 명세서](https://www.notion.so/f5ee37fc5b664dad9bd9767653a88496)
 
