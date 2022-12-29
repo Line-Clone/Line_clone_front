@@ -20,7 +20,7 @@ function FriendList() {
 
   function onLogout() {
     alert("로그아웃 되었습니다.");
-    navigate("/login");
+    navigate("/");
     localStorage.clear();
   }
 

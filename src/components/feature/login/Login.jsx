@@ -25,7 +25,7 @@ function Login() {
     <form
       onSubmit={handleSubmit((data) => {
         onValid(data).then(() => {
-          navigation("/");
+          navigation("/main");
         });
       })}
     >

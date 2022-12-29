@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { readBeforeChat } from "../../../redux/modules/chatSlice";
 import { useDispatch } from "react-redux/es/exports";
 import { useSelector } from "react-redux/es/hooks/useSelector";
@@ -22,6 +22,8 @@ function Chat() {
   const [viewMessages, setViewMessages] = useState([]);
   // const chatlist = useSelector((state) => state.rooms);
   const scrollRef = useRef();
+
+  const navigation = useNavigate();
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -165,17 +167,29 @@ function Chat() {
             />
           </StTextarea>
         </div>
-        <div>
-          <button
-            type="button"
-            onClick={() => {
-              sendMessage();
-              setMessage("");
-            }}
-          >
-            전송
-          </button>
-        </div>
+        <BtnDiv>
+          <div>
+            <button
+              id="back"
+              onClick={() => {
+                navigation("/main");
+              }}
+            >
+              뒤로가기
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                sendMessage();
+                setMessage("");
+              }}
+            >
+              전송
+            </button>
+          </div>
+        </BtnDiv>
       </StBottomBorder>
     </StTopContainer>
   );
@@ -228,16 +242,6 @@ const StBottomBorder = styled.div`
   height: 10rem;
 
   background-color: white;
-
-  button {
-    align-items: flex-end;
-    width: 5rem;
-    height: 2.5rem;
-
-    border: none;
-    border-radius: 5px;
-    background-color: rgb(242, 242, 242);
-  }
 `;
 
 const StTextarea = styled.div`
@@ -346,4 +350,26 @@ const LeftSenderName = styled.div`
   margin-left: 0.5rem;
   width: fit-content;
   padding: 2px;
+`;
+
+const BtnDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 15px;
+
+  button {
+    align-items: flex-end;
+    width: 5rem;
+    height: 2.5rem;
+
+    border: 1px solid rgb(224, 224, 224);
+    border-radius: 5px;
+    background-color: rgb(242, 242, 242);
+  }
+
+  button:hover {
+    background-color: rgba(96, 92, 92, 0.5);
+    color: white;
+  }
 `;
