@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { readBeforeChat } from "../../../redux/modules/chatSlice";
 import { useDispatch } from "react-redux/es/exports";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useRef } from "react";
 
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
@@ -20,10 +21,13 @@ function Chat() {
   const [message, setMessage] = useState("");
   const [viewMessages, setViewMessages] = useState([]);
   const chatlist = useSelector((state) => state.rooms);
-  console.log("chatlist:", chatlist);
+  const scrollRef = useRef();
 
-  console.log("message:", message);
-  console.log("view:", viewMessages);
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
 
   function sendMessage() {
     ws.send(
@@ -52,13 +56,8 @@ function Chat() {
     ws.connect(
       {},
       function (frame) {
-<<<<<<< HEAD
-        ws.subscribe("/topic/chat/room/" + roomId, function (message) {
-          var recv = JSON.parse(message.body);
-=======
         ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
           var recv = JSON.parse(response.body);
->>>>>>> fd0e2a0900f65e707b7a7dee985dde8cccec2eb2
           recvMessage(recv);
         });
         ws.send(
@@ -85,13 +84,17 @@ function Chat() {
   }
 
   useEffect(() => {
+    scrollToBottom();
+  }, [viewMessages]);
+
+  useEffect(() => {
     dispatch(readBeforeChat(param.id));
     roomSubscribe();
   }, []);
 
   return (
     <StTopContainer>
-      <StTopBorder>
+      <StTopBorder ref={scrollRef}>
         {beforechat?.map((item, index) => {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
