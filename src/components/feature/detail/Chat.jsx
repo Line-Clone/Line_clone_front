@@ -1,245 +1,349 @@
-// import React, { useEffect, useState } from "react";
-// import { over } from "stompjs";
-// import SockJS from "sockjs-client";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import { useParams } from "react-router-dom";
+import { readBeforeChat } from "../../../redux/modules/chatSlice";
+import { useDispatch } from "react-redux/es/exports";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useRef } from "react";
 
-// var stompClient = null;
-// const ChatRoom = () => {
-//   const [privateChats, setPrivateChats] = useState(new Map());
-//   const [publicChats, setPublicChats] = useState([]);
-//   const [tab, setTab] = useState("CHATROOM");
-//   const [userData, setUserData] = useState({
-//     username: "",
-//     receivername: "",
-//     connected: false,
-//     message: "",
-//   });
-//   useEffect(() => {
-//     console.log(userData);
-//   }, [userData]);
+function Chat() {
+  let SockJs = new SockJS("http://sangt.shop/ws/chat");
+  let ws = Stomp.over(SockJs);
+  let reconnect = 0;
+  const dispatch = useDispatch();
+  const param = useParams();
+  const roomId = param.id;
+  const beforechat = useSelector((state) => state.chat.messageList);
+  const messages = [];
+  const sender = localStorage.getItem("wschat.nick");
+  const [message, setMessage] = useState("");
+  const [viewMessages, setViewMessages] = useState([]);
+  // const chatlist = useSelector((state) => state.rooms);
+  const scrollRef = useRef();
 
-//   const connect = () => {
-//     let Sock = new SockJS("http://localhost:3002/ws");
-//     stompClient = over(Sock);
-//     stompClient.connect({}, onConnected, onError);
-//   };
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
 
-//   const onConnected = () => {
-//     setUserData({ ...userData, connected: true });
-//     stompClient.subscribe("/chatroom/public", onMessageReceived);
-//     stompClient.subscribe(
-//       "/user/" + userData.username + "/private",
-//       onPrivateMessage
-//     );
-//     userJoin();
-//   };
+  function sendMessage() {
+    ws.send(
+      "/app/chat/message",
+      {},
+      JSON.stringify({
+        type: "TALK",
+        roomId: roomId,
+        sender: sender,
+        message: message,
+      })
+    );
+  }
 
-//   const userJoin = () => {
-//     var chatMessage = {
-//       senderName: userData.username,
-//       status: "JOIN",
-//     };
-//     stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
-//   };
+  function recvMessage(recv) {
+    console.log("메세지 수신");
+    messages.push({
+      type: recv.type,
+      sender: recv.type === "ENTER" ? "" : recv.sender,
+      message: recv.type === "ENTER" ? `[알림] ${recv.message}` : recv.message,
+    });
+    setViewMessages([...messages]);
+  }
 
-//   const onMessageReceived = (payload) => {
-//     var payloadData = JSON.parse(payload.body);
-//     switch (payloadData.status) {
-//       case "JOIN":
-//         if (!privateChats.get(payloadData.senderName)) {
-//           privateChats.set(payloadData.senderName, []);
-//           setPrivateChats(new Map(privateChats));
-//         }
-//         break;
-//       case "MESSAGE":
-//         publicChats.push(payloadData);
-//         setPublicChats([...publicChats]);
-//         break;
-//       default:
-//     }
-//   };
+  function roomSubscribe() {
+    ws.connect(
+      {},
+      function (frame) {
+        ws.subscribe(`/topic/chat/room/${roomId}`, function (response) {
+          var recv = JSON.parse(response.body);
+          recvMessage(recv);
+        });
+        ws.send(
+          "/app/chat/message",
+          {},
+          JSON.stringify({
+            type: "ENTER",
+            roomId: roomId,
+            sender: sender,
+          })
+        );
+      },
+      function (error) {
+        if (reconnect++ <= 5) {
+          setTimeout(function () {
+            console.log("connection reconnect");
+            SockJs = new SockJS("/ws/chat");
+            ws = Stomp.over(SockJs);
+            roomSubscribe();
+          }, 10 * 1000);
+        }
+      }
+    );
+  }
 
-//   const onPrivateMessage = (payload) => {
-//     console.log(payload);
-//     var payloadData = JSON.parse(payload.body);
-//     if (privateChats.get(payloadData.senderName)) {
-//       privateChats.get(payloadData.senderName).push(payloadData);
-//       setPrivateChats(new Map(privateChats));
-//     } else {
-//       let list = [];
-//       list.push(payloadData);
-//       privateChats.set(payloadData.senderName, list);
-//       setPrivateChats(new Map(privateChats));
-//     }
-//   };
+  useEffect(() => {
+    scrollToBottom();
+  }, [viewMessages]);
 
-//   const onError = (err) => {
-//     console.log(err);
-//   };
+  useEffect(() => {
+    dispatch(readBeforeChat(param.id));
+    roomSubscribe();
+  }, []);
 
-//   const handleMessage = (event) => {
-//     const { value } = event.target;
-//     setUserData({ ...userData, message: value });
-//   };
-//   const sendValue = () => {
-//     if (stompClient) {
-//       var chatMessage = {
-//         senderName: userData.username,
-//         message: userData.message,
-//         status: "MESSAGE",
-//       };
-//       console.log(chatMessage);
-//       stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
-//       setUserData({ ...userData, message: "" });
-//     }
-//   };
+  return (
+    <StTopContainer>
+      <StTopBorder ref={scrollRef}>
+        {beforechat?.map((item, index) => {
+          if (localStorage.getItem("wschat.nick") === item.sender) {
+            return (
+              <div>
+                <RightSenderName>{item.sender}</RightSenderName>
+                <BeforeBox>
+                  <div key={index}>{item.message}</div>
+                </BeforeBox>
+              </div>
+            );
+          } else {
+            return (
+              <div>
+                <LeftSenderName>{item.sender}</LeftSenderName>
+                <AfterBox key={index}>
+                  <div>{item.message}</div>
+                </AfterBox>
+              </div>
+            );
+          }
+        })}
+        {viewMessages?.map((item, index) => {
+          if (localStorage.getItem("wschat.nick") === item.sender) {
+            return (
+              <div>
+                <RightSenderName>{item.sender}</RightSenderName>
+                <BeforeBox key={index}>
+                  <div>{item.message}</div>
+                </BeforeBox>
+              </div>
+            );
+          } else if (item.sender === "") {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(112, 101, 101, 0.5)",
+                  borderRadius: "10px",
+                  border: "none)",
+                  color: "rgba(207, 207, 207, 0.8)",
+                }}
+              >
+                {item.message}
+              </div>
+            );
+          } else {
+            return (
+              <div>
+                <LeftSenderName>{item.sender}</LeftSenderName>
+                <AfterBox key={index}>
+                  <div>{item.message}</div>
+                </AfterBox>
+              </div>
+            );
+          }
+        })}
+      </StTopBorder>
+      <StBottomBorder>
+        <div>
+          <StTextarea>
+            <textarea
+              type="text"
+              value={message}
+              onChange={(event) => {
+                setMessage(event.target.value);
+              }}
+            />
+          </StTextarea>
+        </div>
+        <div>
+          <button
+            type="button"
+            onClick={() => {
+              sendMessage();
+              setMessage("");
+            }}
+          >
+            전송
+          </button>
+        </div>
+      </StBottomBorder>
+    </StTopContainer>
+  );
+}
 
-//   const sendPrivateValue = () => {
-//     if (stompClient) {
-//       var chatMessage = {
-//         senderName: userData.username,
-//         receiverName: tab,
-//         message: userData.message,
-//         status: "MESSAGE",
-//       };
+export default Chat;
 
-//       if (userData.username !== tab) {
-//         privateChats.get(tab).push(chatMessage);
-//         setPrivateChats(new Map(privateChats));
-//       }
-//       stompClient.send("/app/private-message", {}, JSON.stringify(chatMessage));
-//       setUserData({ ...userData, message: "" });
-//     }
-//   };
+const StTopContainer = styled.div`
+  outline: 1px solid rgb(230, 230, 230);
+  border-radius: 5px;
+  margin: 20px auto;
 
-//   const handleUsername = (event) => {
-//     const { value } = event.target;
-//     setUserData({ ...userData, username: value });
-//   };
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 700px;
 
-//   const registerUser = () => {
-//     connect();
-//   };
-//   return (
-//     <div className="container">
-//       {userData.connected ? (
-//         <div className="chat-box">
-//           <div className="member-list">
-//             <ul>
-//               <li
-//                 onClick={() => {
-//                   setTab("CHATROOM");
-//                 }}
-//                 className={`member ${tab === "CHATROOM" && "active"}`}
-//               >
-//                 Chatroom
-//               </li>
-//               {[...privateChats.keys()].map((name, index) => (
-//                 <li
-//                   onClick={() => {
-//                     setTab(name);
-//                   }}
-//                   className={`member ${tab === name && "active"}`}
-//                   key={index}
-//                 >
-//                   {name}
-//                 </li>
-//               ))}
-//             </ul>
-//           </div>
-//           {tab === "CHATROOM" && (
-//             <div className="chat-content">
-//               <ul className="chat-messages">
-//                 {publicChats.map((chat, index) => (
-//                   <li
-//                     className={`message ${chat.senderName ===
-//                       userData.username && "self"}`}
-//                     key={index}
-//                   >
-//                     {chat.senderName !== userData.username && (
-//                       <div className="avatar">{chat.senderName}</div>
-//                     )}
-//                     <div className="message-data">{chat.message}</div>
-//                     {chat.senderName === userData.username && (
-//                       <div className="avatar self">{chat.senderName}</div>
-//                     )}
-//                   </li>
-//                 ))}
-//               </ul>
+  box-sizing: contentBox;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-//               <div className="send-message">
-//                 <input
-//                   type="text"
-//                   className="input-message"
-//                   placeholder="enter the message"
-//                   value={userData.message}
-//                   onChange={handleMessage}
-//                 />
-//                 <button
-//                   type="button"
-//                   className="send-button"
-//                   onClick={sendValue}
-//                 >
-//                   send
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-//           {tab !== "CHATROOM" && (
-//             <div className="chat-content">
-//               <ul className="chat-messages">
-//                 {[...privateChats.get(tab)].map((chat, index) => (
-//                   <li
-//                     className={`message ${chat.senderName ===
-//                       userData.username && "self"}`}
-//                     key={index}
-//                   >
-//                     {chat.senderName !== userData.username && (
-//                       <div className="avatar">{chat.senderName}</div>
-//                     )}
-//                     <div className="message-data">{chat.message}</div>
-//                     {chat.senderName === userData.username && (
-//                       <div className="avatar self">{chat.senderName}</div>
-//                     )}
-//                   </li>
-//                 ))}
-//               </ul>
+  background-color: rgb(190, 205, 222);
+`;
 
-//               <div className="send-message">
-//                 <input
-//                   type="text"
-//                   className="input-message"
-//                   placeholder="enter the message"
-//                   value={userData.message}
-//                   onChange={handleMessage}
-//                 />
-//                 <button
-//                   type="button"
-//                   className="send-button"
-//                   onClick={sendPrivateValue}
-//                 >
-//                   send
-//                 </button>
-//               </div>
-//             </div>
-//           )}
-//         </div>
-//       ) : (
-//         <div className="register">
-//           <input
-//             id="user-name"
-//             placeholder="Enter your name"
-//             name="userName"
-//             value={userData.username}
-//             onChange={handleUsername}
-//             margin="normal"
-//           />
-//           <button type="button" onClick={registerUser}>
-//             connect
-//           </button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
+const StTopBorder = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 500px;
+  height: 35rem;
 
-// export default ChatRoom;
+  border-bottom-style: solid;
+  border-bottom-color: rgb(230, 230, 230);
+  border-bottom-width: 1px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  gap: 10px;
+`;
+
+const StBottomBorder = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+
+  width: 500px;
+  height: 10rem;
+
+  background-color: white;
+
+  button {
+    align-items: flex-end;
+    width: 5rem;
+    height: 2.5rem;
+
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(242, 242, 242);
+  }
+`;
+
+const StTextarea = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  * {
+    background-color: white;
+    border: none;
+
+    width: 496px;
+    height: 6rem;
+  }
+
+  textarea:focus {
+    outline: none;
+  }
+`;
+
+const BeforeBox = styled.div`
+  color: black;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  div {
+    position: relative;
+    background-color: rgb(251, 229, 77);
+    border-radius: 0.4em;
+    height: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    max-width: calc(100% - 90px);
+    padding: 10px;
+  }
+
+  div:after {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-left-color: rgb(251, 229, 77);
+    border-right: 0;
+    border-bottom: 0;
+    margin-top: -10px;
+    margin-right: -20px;
+  }
+`;
+
+const AfterBox = styled.div`
+  color: black;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  div {
+    position: relative;
+    background: #ffffff;
+    border-radius: 0.4em;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    max-width: calc(100% - 90px);
+    padding: 10px;
+  }
+
+  div:after {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-right-color: #ffffff;
+    border-left: 0;
+    border-bottom: 0;
+    margin-top: -10px;
+    margin-left: -20px;
+  }
+`;
+
+const RightSenderName = styled.div`
+  float: right;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  margin-right: 0.5rem;
+  width: fit-content;
+  padding: 2px;
+`;
+
+const LeftSenderName = styled.div`
+  float: left;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  margin-left: 0.5rem;
+  width: fit-content;
+  padding: 2px;
+`;
