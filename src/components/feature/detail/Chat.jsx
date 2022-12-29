@@ -20,7 +20,7 @@ function Chat() {
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
   const [viewMessages, setViewMessages] = useState([]);
-  const chatlist = useSelector((state) => state.rooms);
+  // const chatlist = useSelector((state) => state.rooms);
   const scrollRef = useRef();
 
   const scrollToBottom = () => {

@@ -62,7 +62,7 @@ function Login() {
               name="password"
               placeholder="비밀번호"
             ></input>
-            {errors.password && ( //div로 감싸서 100% 주면 부모 디브 밖으로 안 넘어간다
+            {errors.password && (
               <p style={{ color: "red", fontSize: "12px" }}>
                 {errors.password.message}
               </p>

@@ -68,7 +68,7 @@ function Signup() {
           </div>
           <div>
             {" "}
-            <input // 얘 100%
+            <input
               name="password"
               type="password"
               placeholder="비밀번호"
@@ -82,7 +82,7 @@ function Signup() {
                 },
               })}
             />
-            {errors.password && ( //div로 감싸서 100% 주면 부모 디브 밖으로 안 넘어간다
+            {errors.password && (
               <p style={{ color: "red", fontSize: "12px" }}>
                 {errors.password.message}
               </p>
