@@ -315,14 +315,3 @@ const SenderName = styled.div`
   width: fit-content;
   padding: 2px;
 `;
-
-// const ChatBox = styled.div`
-//   display: flex;
-//   flex-direction: row-reverse;
-//   justify-content: flex-start;
-//   align-items: center;
-// `;
-
-{
-  /* <AccountCircleIcon style={{ marginLeft: "25px" }} /> */
-}
