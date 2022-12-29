@@ -22,10 +22,10 @@
 
 | 이름 | 개인 블로그 링크 | 개인 깃허브 링크 | FE / BE |
 | --- | --- | --- | --- |
-| 이상현 | https://velog.io/@dltkdgus1850 | hhttps://github.com/Sangtriever | BE 📤 |
+| 이상현 | https://velog.io/@dltkdgus1850 | https://github.com/Sangtriever | BE 📤 |
 | 이상훈 | https://23hoon.tistory.com/ | https://github.com/leemeo3 | BE 📤 |
 | 김아영 | https://isladaisy.tistory.com/ | https://github.com/isladaisy | BE 📤 |
-| 이정민 |  | https://github.com/kkookk55 | FE 📨 |
+| 이정민 | https://velog.io/@kkookk55 | https://github.com/kkookk55 | FE 📨 |
 | 김현빈 | https://velog.io/@hailey199535 | https://github.com/kimmy199535 | FE 📨 |
 
 <br />
