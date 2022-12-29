@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { readBeforeChat } from "../../../redux/modules/chatSlice";
 import { useDispatch } from "react-redux/es/exports";
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useRef } from "react";
 
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
@@ -15,16 +16,18 @@ function Chat() {
   const param = useParams();
   const roomId = param.id;
   const beforechat = useSelector((state) => state.chat.messageList);
-  console.log("beforechat:", beforechat);
   const messages = [];
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
   const [viewMessages, setViewMessages] = useState([]);
   const chatlist = useSelector((state) => state.rooms);
-  console.log("chatlist:", chatlist);
+  const scrollRef = useRef();
 
-  console.log("message:", message);
-  console.log("view:", viewMessages);
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
 
   function sendMessage() {
     ws.send(
@@ -40,6 +43,7 @@ function Chat() {
   }
 
   function recvMessage(recv) {
+    console.log("메세지 수신");
     messages.push({
       type: recv.type,
       sender: recv.type === "ENTER" ? "" : recv.sender,
@@ -69,7 +73,8 @@ function Chat() {
       function (error) {
         if (reconnect++ <= 5) {
           setTimeout(function () {
-            SockJs = new SockJS("http://sangt.shop/ws/chat");
+            console.log("connection reconnect");
+            SockJs = new SockJS("/ws/chat");
             ws = Stomp.over(SockJs);
             roomSubscribe();
           }, 10 * 1000);
@@ -79,13 +84,17 @@ function Chat() {
   }
 
   useEffect(() => {
+    scrollToBottom();
+  }, [viewMessages]);
+
+  useEffect(() => {
     dispatch(readBeforeChat(param.id));
     roomSubscribe();
   }, []);
 
   return (
     <StTopContainer>
-      <StTopBorder>
+      <StTopBorder ref={scrollRef}>
         {beforechat?.map((item, index) => {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
