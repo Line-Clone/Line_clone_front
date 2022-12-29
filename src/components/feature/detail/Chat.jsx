@@ -12,9 +12,8 @@ function Chat() {
   let reconnect = 0;
   const dispatch = useDispatch();
   const param = useParams();
-  const rommId = param.id;
+  const roomId = param.id;
   const beforechat = useSelector((state) => state.chat.messageList);
-  console.log("beforechat:", beforechat);
   const messages = [];
   const sender = localStorage.getItem("wschat.nick");
   const [message, setMessage] = useState("");
@@ -25,7 +24,7 @@ function Chat() {
       {},
       JSON.stringify({
         type: "TALK",
-        roomId: rommId,
+        roomId: roomId,
         sender: sender,
         message: message,
       })
@@ -33,6 +32,7 @@ function Chat() {
   }
 
   function recvMessage(recv) {
+    console.log("메세지 수신");
     messages.push({
       type: recv.type,
       sender: recv.type == "ENTER" ? "[알림]" : recv.sender,
@@ -45,8 +45,8 @@ function Chat() {
     ws.connect(
       {},
       function (frame) {
-        ws.subscribe(`/topic/chat/room/${rommId}`, function (response) {
-          var recv = JSON.parse(response.body);
+        ws.subscribe("/topic/chat/room/" + roomId, function (message) {
+          var recv = JSON.parse(message.body);
           recvMessage(recv);
         });
         ws.send(
@@ -54,7 +54,7 @@ function Chat() {
           {},
           JSON.stringify({
             type: "ENTER",
-            roomId: rommId,
+            roomId: roomId,
             sender: sender,
           })
         );
@@ -62,7 +62,8 @@ function Chat() {
       function (error) {
         if (reconnect++ <= 5) {
           setTimeout(function () {
-            SockJs = new SockJS("http://sangt.shop/ws/chat");
+            console.log("connection reconnect");
+            SockJs = new SockJS("/ws/chat");
             ws = Stomp.over(SockJs);
             roomSubscribe();
           }, 10 * 1000);
