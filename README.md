@@ -34,7 +34,27 @@
 
 ## 🛠 기술 스택
 
+### Back
+- java
+- gradle
+- spring
+- springboot
+- sockjs
+- stomp
+- jwt
+- mysql
 
+
+### Front
+- javascript
+- react
+- redux
+- redux-toolkit
+- axios
+- sockjs
+- stomp
+
+<br />
 
 ## 📽 시연 영상
 
@@ -48,10 +68,10 @@
 
 
 
-## 🎨 와이어 프레임
+## 🎨 와이어 프레임 (카카오톡으로 노선을 변경했기 때문에 거의 쓰이지 않았습니다...🫠)
 ![image](https://user-images.githubusercontent.com/113615839/209914986-c20a7c0a-6b50-4141-acac-74921212798f.png)
 
-[피그마 링크: ](https://www.figma.com/file/MPfQUpfR0u5nVCw5Vf4Mvv/LINE-%ED%81%B4%EB%A1%A0-%EC%BD%94%EB%94%A9?node-id=0%3A1&t=cB9EpV2sFOEmLXnx-0)
+[피그마 링크 ](https://www.figma.com/file/MPfQUpfR0u5nVCw5Vf4Mvv/LINE-%ED%81%B4%EB%A1%A0-%EC%BD%94%EB%94%A9?node-id=0%3A1&t=cB9EpV2sFOEmLXnx-0)
 
 <br />
 
