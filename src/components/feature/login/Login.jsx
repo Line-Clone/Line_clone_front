@@ -16,12 +16,8 @@ function Login() {
   const navigation = useNavigate();
 
   const onValid = async (data) => {
-    console.log("login data:", data);
-    // const jsonData = JSON.stringify({ data });
-    await postLogin(data).then(
-      (response) => localStorage.setItem("id", response.headers.authorization),
-      console.log("get item:", localStorage.getItem("id"))
-      // 비동기로 실행되는 함수는 순서를 잘 생각해야한다.
+    await postLogin(data).then((response) =>
+      localStorage.setItem("id", response.headers.authorization)
     );
   };
 

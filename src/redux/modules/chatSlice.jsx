@@ -18,8 +18,6 @@ export const readBeforeChat = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await authInstance.get(`/chat/room/join/${payload}`);
-      console.log("before response:", response.data);
-      console.log("messageList:", response.data.messageList);
       return thunkAPI.fulfillWithValue(response.data.messageList);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

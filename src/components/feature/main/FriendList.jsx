@@ -12,7 +12,6 @@ import TextButton from "../../common/TextButton";
 
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
-  console.log("chatrooms:", chatrooms);
   const userInfo = useSelector((state) => state.rooms.userInfo);
 
   const dispatch = useDispatch();

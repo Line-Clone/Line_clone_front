@@ -16,7 +16,6 @@ function Signup() {
   const navigation = useNavigate();
 
   const onSubmit = async (data) => {
-    console.log("data:", data);
     await postSignup(data).then(
       alert("회원가입이 완료되었습니다. 다시 로그인 해 주세요"),
       navigation("/login")
