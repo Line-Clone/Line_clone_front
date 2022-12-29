@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { readBeforeChat } from "../../../redux/modules/chatSlice";
 import { useDispatch } from "react-redux/es/exports";
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 function Chat() {
   let SockJs = new SockJS("http://sangt.shop/ws/chat");
@@ -90,39 +89,42 @@ function Chat() {
         {beforechat?.map((item, index) => {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
-              <IconBox>
-                <AccountCircleIcon />
-                <BeforeBox key={index}>
-                  <div>
-                    {item.sender} :{item.message}
-                  </div>
+              <div>
+                <SenderName>{item.sender}</SenderName>
+                <BeforeBox>
+                  <div key={index}>{item.message}</div>
                 </BeforeBox>
-              </IconBox>
+              </div>
             );
           } else {
             return (
-              <AfterBox key={index}>
-                <div>
-                  {item.sender} :{item.message}
-                </div>
-              </AfterBox>
+              <div>
+                <AfterBox key={index}>
+                  <div>
+                    {item.sender}
+                    {item.message}
+                  </div>
+                </AfterBox>
+              </div>
             );
           }
         })}
         {viewMessages?.map((item, index) => {
           if (localStorage.getItem("wschat.nick") === item.sender) {
             return (
-              <BeforeBox key={index}>
-                <div>
-                  {item.sender} :{item.message}
-                </div>
-              </BeforeBox>
+              <div>
+                <SenderName>{item.sender}</SenderName>
+                <BeforeBox key={index}>
+                  <div>{item.message}</div>
+                </BeforeBox>
+              </div>
             );
           } else {
             return (
               <AfterBox key={index}>
                 <div>
-                  {item.sender} :{item.message}
+                  {item.sender}
+                  {item.message}
                 </div>
               </AfterBox>
             );
@@ -189,7 +191,7 @@ const StTopBorder = styled.div`
   border-bottom-color: rgb(230, 230, 230);
   border-bottom-width: 1px;
 
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 
   gap: 10px;
@@ -247,15 +249,15 @@ const BeforeBox = styled.div`
     position: relative;
     background-color: rgb(251, 229, 77);
     border-radius: 0.4em;
-    height: 3rem;
+    height: auto;
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
     max-width: calc(100% - 90px);
+    padding: 10px;
   }
 
   div:after {
-    content: "";
     position: absolute;
     right: 0;
     top: 50%;
@@ -273,23 +275,23 @@ const BeforeBox = styled.div`
 const AfterBox = styled.div`
   color: black;
   padding: 10px;
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
   div {
     position: relative;
     background: #ffffff;
     border-radius: 0.4em;
-    height: 3rem;
+    height: auto;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     max-width: calc(100% - 90px);
+    padding: 10px;
   }
 
   div:after {
-    content: "";
     position: absolute;
     left: 0;
     top: 50%;
@@ -304,34 +306,23 @@ const AfterBox = styled.div`
   }
 `;
 
-const IconBox = styled.div`
+const SenderName = styled.div`
+  float: right;
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-  align-items: center;
-  div {
-    position: relative;
-    background-color: rgb(251, 229, 77);
-    border-radius: 0.4em;
-    height: 3rem;
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    max-width: calc(100% - 90px);
-  }
-
-  /* div:after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 0;
-    height: 0;
-    border: 20px solid transparent;
-    border-left-color: rgb(251, 229, 77);
-    border-right: 0;
-    border-bottom: 0;
-    margin-top: -10px;
-    margin-right: -20px;
-  } */
+  flex-direction: column;
+  align-content: flex-end;
+  margin-right: 1rem;
+  width: fit-content;
+  padding: 2px;
 `;
+
+// const ChatBox = styled.div`
+//   display: flex;
+//   flex-direction: row-reverse;
+//   justify-content: flex-start;
+//   align-items: center;
+// `;
+
+{
+  /* <AccountCircleIcon style={{ marginLeft: "25px" }} /> */
+}
