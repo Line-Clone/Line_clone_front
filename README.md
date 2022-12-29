@@ -49,6 +49,9 @@
 
 
 ## 🎨 와이어 프레임
+![image](https://user-images.githubusercontent.com/113615839/209914986-c20a7c0a-6b50-4141-acac-74921212798f.png)
+
+[피그마 링크: ](https://www.figma.com/file/MPfQUpfR0u5nVCw5Vf4Mvv/LINE-%ED%81%B4%EB%A1%A0-%EC%BD%94%EB%94%A9?node-id=0%3A1&t=cB9EpV2sFOEmLXnx-0)
 
 <br />
 
