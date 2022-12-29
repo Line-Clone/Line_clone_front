@@ -65,11 +65,54 @@ https://www.youtube.com/watch?v=hxPeeH3jkm4
 
 ## ❗️ 트러블 슈팅
 
-1. 비동기 처리 한 함수의 결과 순서가 꼬여서 생긴 문제
+1. 
+
+```
+const onValid = async (data) => {
+    await postLogin(data).then((response) =>
+      localStorage.setItem("id", response.headers.authorization)
+    );
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit((data) => {
+        onValid(data).then(() => {
+          navigation("/main");
+        });
+      })}
+    >
+```
+
+[문제]: 비동기 처리 한 함수의 결과 순서가 꼬여서 생긴 문제
     
-    [원인]: 로컬 스토리지에 토큰이 저장되기 전에 메인 페이지로 이동해서 채팅방 리스트가 불러지지 않음
+[원인]: 로컬 스토리지에 토큰이 저장되기 전에 메인 페이지로 이동해서 채팅방 리스트가 불러지지 않음
     
-    [해결]: 로컬 스토리지에 토큰이 저장되는 함수가 온전히 끝나고 나서 메인 페이지로 이동하는 코드로 수정.
+[해결]: 로컬 스토리지에 토큰이 저장되는 함수가 온전히 끝나고 나서 메인 페이지로 이동하는 코드로 수정.
+
+2. 
+
+```
+function recvMessage(recv) {
+console.log("메세지 수신");
+messages.push({
+	type: recv.type,
+	sender: recv.type === "ENTER" ? "" : recv.sender,
+	message: recv.type === "ENTER" ? `[알림] ${recv.message}` : recv.message,
+});
+setViewMessages([messages]);
+}
+```
+
+[문제]: 
+- useState로 관리하는 viewMessages의 값을 배열을 담은 변수 messages로 변경할수 있도록 코드 설정.
+- messages에 새로운 요소가 추가될때마다 viewMessages의  값이 바뀌어서 리랜더링이 일어나도록 설계하였는데 리렌더링이 일어나지 않음.
+
+[원인]:
+- messages가 참조하고 있는 주소의 값은 변하지않고 해당 주소의 데이터값만 변경 되었기 때문
+
+[해결]:
+- `setViewMessages([messages]);` 코드를    `setViewMessages([...messages]);`  로 바꾸어 문제 해결
 
 <br />
 
