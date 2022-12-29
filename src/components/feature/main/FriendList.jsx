@@ -12,6 +12,7 @@ import TextButton from "../../common/TextButton";
 
 function FriendList() {
   const chatrooms = useSelector((state) => state.rooms.rooms);
+  console.log("chatrooms:", chatrooms);
   const userInfo = useSelector((state) => state.rooms.userInfo);
 
   const dispatch = useDispatch();
@@ -35,16 +36,15 @@ function FriendList() {
       alert("방 제목을 입력해 주십시요.");
       return;
     } else {
-      dispatch(createRoom(roomName));
+      await dispatch(createRoom(roomName));
       dispatch(readAllRooms());
       setRoomTitle("");
     }
   }
 
   useEffect(() => {
-    console.log("id", localStorage.getItem("id"));
     dispatch(readAllRooms());
-  }, []);
+  }, [dispatch]);
 
   return (
     <OuterStyle>
@@ -60,29 +60,31 @@ function FriendList() {
         </div>
       </nav>
       <SecondLine>
-        <div style={{ fontSize: "20px", fontWeight: "bold" }}>Chats</div>
-        <div>
-          <input
-            type="text"
-            value={roomTitle}
-            placeholder="채팅방 제목을 입력해주세요."
-            onChange={(e) => {
-              setRoomTitle(e.target.value);
-            }}
-          ></input>{" "}
-          <button
-            style={{
-              backgroundColor: "rgb(230,230,230)",
-              border: "1px solid gray",
-              height: "1.8rem",
-            }}
-            onClick={() => {
-              createARoom(roomTitle);
-            }}
-          >
-            채팅방 만들기
-          </button>
-        </div>
+        <StHeader>
+          <div style={{ fontSize: "20px", fontWeight: "bold" }}>Chats</div>
+          <div>
+            <input
+              type="text"
+              value={roomTitle}
+              placeholder="채팅방 제목을 입력해주세요."
+              onChange={(e) => {
+                setRoomTitle(e.target.value);
+              }}
+            ></input>{" "}
+            <button
+              style={{
+                backgroundColor: "rgb(230,230,230)",
+                border: "1px solid gray",
+                height: "1.8rem",
+              }}
+              onClick={() => {
+                createARoom(roomTitle);
+              }}
+            >
+              채팅방 만들기
+            </button>
+          </div>
+        </StHeader>
         {chatrooms?.map((room) => {
           return (
             <div>
@@ -138,10 +140,9 @@ const OuterStyle = styled.div`
 const SecondLine = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 80px;
+  margin-left: 100px;
   width: 100%;
 
-  padding: 30px;
   gap: 20px;
 
   input {
@@ -152,6 +153,20 @@ const SecondLine = styled.div`
     background-color: #eeeeee;
     border: none;
   }
+`;
+
+const StHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background-color: rgb(255, 255, 255);
+  text-align: left;
+
+  gap: 10px;
+
+  position: fixed;
+  width: 23rem;
+  padding: 0.6rem 0.5rem 0.6rem 0.5rem;
 `;
 
 const StButton = styled.button`
