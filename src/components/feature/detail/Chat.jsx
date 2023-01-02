@@ -9,7 +9,7 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useRef } from "react";
 
 function Chat() {
-  let SockJs = new SockJS("http://sangt.shop/ws/chat");
+  let SockJs = new SockJS("");
   let ws = Stomp.over(SockJs);
   let reconnect = 0;
   const dispatch = useDispatch();
