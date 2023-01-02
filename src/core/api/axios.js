@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const authInstance = axios.create({
-  baseURL: "http://sangt.shop",
+  baseURL: "",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
